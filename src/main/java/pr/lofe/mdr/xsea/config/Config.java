@@ -6,6 +6,8 @@ import pr.lofe.mdr.xsea.xSea;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @SuppressWarnings("unused")
 public class Config {
@@ -40,6 +42,15 @@ public class Config {
             throw new RuntimeException("Failed to create " + path, e);
         }
         this.config = YamlConfiguration.loadConfiguration(file);
+    }
+
+    public List<String> getKeys(String path) {
+        if(config != null) {
+            return config.getKeys(true).stream()
+                    .filter(key -> key.startsWith(path))
+                    .collect(Collectors.toList());
+        }
+        return null;
     }
 
     public void save() {
