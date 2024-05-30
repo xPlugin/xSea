@@ -1,0 +1,4 @@
+name: xSea
+main: pr.lofe.mdr.xsea.xSea
+version: '1.0'
+api-version: '1.20'
