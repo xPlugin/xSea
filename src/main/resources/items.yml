@@ -1,0 +1,5 @@
+example:
+  type: "minecraft:diamond_axe"
+  model: 1
+  flags:
+    - hide_attributes
