@@ -76,7 +76,6 @@ public class xSea extends JavaPlugin {
         Bukkit.addRecipe(recipe);
 
         new SeaCommand().register();
-        Bukkit.getPluginManager().registerEvents(new CollisionCheck(), this);
         Bukkit.getPluginManager().registerEvents(new InventoryListener(), this);
         Bukkit.getPluginManager().registerEvents(new ItemListener(), this);
     }
