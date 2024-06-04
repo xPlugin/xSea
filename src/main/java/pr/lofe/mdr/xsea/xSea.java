@@ -1,24 +1,88 @@
 package pr.lofe.mdr.xsea;
 
+import dev.jorel.commandapi.CommandAPI;
+import net.minecraft.world.item.enchantment.Enchantment;
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
+import pr.lofe.lib.xbase.text.TextWrapper;
+import pr.lofe.mdr.xsea.command.SeaCommand;
+import pr.lofe.mdr.xsea.inv.CarpenterRecipe;
+import pr.lofe.mdr.xsea.inv.InventoryListener;
+import pr.lofe.mdr.xsea.item.ItemRegistry;
+import pr.lofe.mdr.xsea.item.WaterResistance;
 import pr.lofe.mdr.xsea.listener.CollisionCheck;
 import pr.lofe.mdr.xsea.registry.RecipesProvider;
+import pr.lofe.mdr.xsea.util.EnchantHandler;
+
+import java.util.HashMap;
 
 public class xSea extends JavaPlugin {
 
     public static xSea I;
+    public Enchantment WATER_RESISTANCE;
 
     private RecipesProvider recipes;
+    private ItemRegistry items;
+
 
     @Override public void onEnable() {
         I = this;
 
-        recipes = new RecipesProvider(){{
-            init();
-        }};
+        reloadData();
 
+        EnchantHandler.unfreezeRegistry();
+        WATER_RESISTANCE = new WaterResistance().register();
+        EnchantHandler.freezeRegistry();
+
+        ItemStack oak_plank = items.getItem("oak_plank");
+        oak_plank.setAmount(8);
+        CarpenterRecipe plank = new CarpenterRecipe(NamespacedKey.minecraft("plank"), oak_plank){{
+            setItems("PAAAP", new HashMap<>(){{
+                put('P', new ItemStack(Material.OAK_PLANKS));
+                put('A', null);
+            }});
+        }};
+        recipes.add(plank);
+
+        CarpenterRecipe bottom = new CarpenterRecipe(NamespacedKey.minecraft("boat_bottom"), items.getItem("boat_bottom")) {{
+            setItems("LPPPL", new HashMap<>(){{
+                put('L', new ItemStack(Material.LEAD));
+                put('P', items.getItem("oak_plank"));
+            }});
+        }};
+        recipes.add(bottom);
+
+        CarpenterRecipe boat = new CarpenterRecipe(NamespacedKey.minecraft("boat"), new ItemStack(Material.OAK_BOAT)){{
+           setItems("PPBPP", new HashMap<>(){{
+               put('P', items.getItem("oak_plank"));
+               put('B', items.getItem("boat_bottom"));
+           }});
+        }};
+        recipes.add(boat);
+
+        new SeaCommand().register();
         Bukkit.getPluginManager().registerEvents(new CollisionCheck(), this);
+        Bukkit.getPluginManager().registerEvents(new InventoryListener(), this);
     }
 
+    public void reloadData() {
+        items = new ItemRegistry();
+        items.init();
+
+        recipes = new RecipesProvider();
+        recipes.init();
+    }
+
+    @Override
+    public void onDisable() {
+        CommandAPI.unregister("sea");
+    }
+
+    public static RecipesProvider getRecipes() {
+        return I.recipes;
+    }
+    public static ItemRegistry getItems() { return I.items; }
 }

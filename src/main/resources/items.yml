@@ -1,5 +1,9 @@
-example:
-  type: "minecraft:diamond_axe"
-  model: 1
+oak_plank:
+  type: paper
+  cmd: 1112
   flags:
     - hide_attributes
+  display:
+    name: "Дубовая доска"
+    lore:
+      - "<dark_blue>Modoru: Межсезонье</dark_blue>"
