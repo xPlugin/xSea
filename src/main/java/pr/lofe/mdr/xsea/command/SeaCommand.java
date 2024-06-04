@@ -1,23 +1,68 @@
 package pr.lofe.mdr.xsea.command;
 
+import dev.jorel.commandapi.arguments.ArgumentSuggestions;
+import dev.jorel.commandapi.arguments.IntegerArgument;
+import dev.jorel.commandapi.arguments.PlayerArgument;
+import dev.jorel.commandapi.arguments.TextArgument;
 import dev.jorel.commandapi.executors.CommandArguments;
+import net.kyori.adventure.text.Component;
 import org.bukkit.command.CommandSender;
-import pr.lofe.lib.xbase.cmd.Command;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+import pr.lofe.mdr.xsea.inv.TableHolder;
+import pr.lofe.mdr.xsea.item.ItemRegistry;
 import pr.lofe.mdr.xsea.xSea;
 
 public class SeaCommand extends Command {
 
     public SeaCommand() {
-        super("xsea", xSea.I);
+        super("xsea");
         src.withSubcommands(
+                new Command("table") {
+                    @Override
+                    protected void execute(CommandSender sender, CommandArguments args) {
+                        Player player = (Player) args.get("player");
+                        if(player != null) {
+                            player.openInventory(new TableHolder().getInventory());
+                        }
+                    }
+                }.src.withArguments(new PlayerArgument("player")),
+
+                new Command("reload") {
+                    @Override
+                    protected void execute(CommandSender sender, CommandArguments args) {
+                        if(sender.hasPermission("*")) {
+                            sender.sendMessage("Reloading... If next message is not appears, check console.");
+                            xSea.I.reloadData();
+                            sender.sendMessage("Reloaded!");
+                        }
+                    }
+                }.src,
+
                 new Command("give") {
                     @Override
-                    protected void execute(CommandSender commandSender, CommandArguments commandArguments) {
+                    protected void execute(CommandSender sender, CommandArguments args) {
+                        Player player = (Player) args.get("player");
+                        assert player != null;
 
+                        String id = args.getRaw("item");
+                        assert id != null;
+
+                        ItemStack item = xSea.getItems().getItem(id);
+                        if(item != null) {
+                            int amount = 1;
+                            if(args.get("amount") instanceof Integer integer) amount = integer;
+
+                            player.getInventory().addItem(item);
+                            sender.sendMessage(
+                                    Component.text("Выдано "+ (amount == 1 ? "" : (amount) + " ")).append(item.displayName()).append(Component.text(" игроку " + player.getName()))
+                            );
+                        }
                     }
                 }.src
+                        .withArguments(new PlayerArgument("player"), new TextArgument("item").replaceSuggestions(ArgumentSuggestions.strings(info -> xSea.getItems().itemsIDs().toArray(new String[0]))))
+                        .withOptionalArguments(new IntegerArgument("amount", 1, 64))
         );
-        register();
     }
 
     @Override protected void execute(CommandSender commandSender, CommandArguments commandArguments) {}
