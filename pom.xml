@@ -100,7 +100,7 @@
             <artifactId>xBase</artifactId>
             <version>1.0-SNAPSHOT</version>
             <scope>system</scope>
-            <systemPath>${project.basedir}/libs/xBase-shaded.jar</systemPath>
+            <systemPath>${project.basedir}/libs/xBase.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>io.th0rgal</groupId>

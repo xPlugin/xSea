@@ -62,10 +62,6 @@ public class RecipesProvider {
         return null;
     }
 
-    public Config data() {
-        return data;
-    }
-
     private static boolean isSimilar(ItemStack recipe, ItemStack presented) {
         if(recipe == null) return presented == null;
         else if(presented == null) return false;
