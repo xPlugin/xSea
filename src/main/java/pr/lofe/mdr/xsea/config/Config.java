@@ -13,14 +13,14 @@ import java.util.stream.Collectors;
 public class Config {
     final String path;
 
-    public Config(String path, boolean isResource) {
+    public Config(String path, boolean isResource, boolean replace) {
         this.file = new File(xSea.I.getDataFolder(),  path + ".yml");
         this.path = path;
         try {
             if(xSea.I.getDataFolder().isDirectory()) {
 
                 if (!this.file.exists() && isResource)
-                    xSea.I.saveResource(path + ".yml", false);
+                    xSea.I.saveResource(path + ".yml", replace);
                 if (!this.file.exists() && !this.file.createNewFile())
                     throw new IOException();
             }

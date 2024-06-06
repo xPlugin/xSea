@@ -1,6 +1,11 @@
 package pr.lofe.mdr.xsea;
 
 import dev.jorel.commandapi.CommandAPI;
+import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.item.enchantment.DigDurabilityEnchantment;
 import net.minecraft.world.item.enchantment.Enchantment;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -14,7 +19,7 @@ import pr.lofe.mdr.xsea.inv.CarpenterRecipe;
 import pr.lofe.mdr.xsea.inv.InventoryListener;
 import pr.lofe.mdr.xsea.item.ItemRegistry;
 import pr.lofe.mdr.xsea.item.WaterResistance;
-import pr.lofe.mdr.xsea.listener.CollisionCheck;
+import pr.lofe.mdr.xsea.listener.BlockListener;
 import pr.lofe.mdr.xsea.listener.ItemListener;
 import pr.lofe.mdr.xsea.registry.RecipesProvider;
 import pr.lofe.mdr.xsea.util.EnchantHandler;
@@ -31,12 +36,14 @@ public class xSea extends JavaPlugin {
 
 
     @Override public void onEnable() {
+        Bukkit.broadcast(TextWrapper.text("<blue>[xSea]</blue> [patched]<br>Debug mode <u><green>enabled</green></u>, saving StackTrace`s to log file."));
+
         I = this;
 
         reloadData();
 
         EnchantHandler.unfreezeRegistry();
-        WATER_RESISTANCE = new WaterResistance().register();
+        WATER_RESISTANCE = Registry.register(BuiltInRegistries.ENCHANTMENT, "water_resistance", new WaterResistance(Enchantment.Rarity.UNCOMMON, EquipmentSlot.MAINHAND));
         EnchantHandler.freezeRegistry();
 
         ItemStack oak_plank = items.getItem("oak_plank");
@@ -78,6 +85,7 @@ public class xSea extends JavaPlugin {
         new SeaCommand().register();
         Bukkit.getPluginManager().registerEvents(new InventoryListener(), this);
         Bukkit.getPluginManager().registerEvents(new ItemListener(), this);
+        Bukkit.getPluginManager().registerEvents(new BlockListener(), this);
     }
 
     public void reloadData() {

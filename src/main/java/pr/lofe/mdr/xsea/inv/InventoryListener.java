@@ -3,19 +3,26 @@ package pr.lofe.mdr.xsea.inv;
 import io.th0rgal.oraxen.api.OraxenBlocks;
 import io.th0rgal.oraxen.mechanics.Mechanic;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.SoundCategory;
 import org.bukkit.block.Block;
+import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.util.Vector;
 import pr.lofe.mdr.xsea.xSea;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class InventoryListener implements Listener {
 
@@ -62,7 +69,22 @@ public class InventoryListener implements Listener {
                 }
             }
 
-            Bukkit.getScheduler().runTaskLater(xSea.I, () -> holder.update(inv), 0L);
+            Bukkit.getScheduler().runTaskLater(xSea.I, () -> holder.update(inv), 1L);
+        }
+    }
+
+    @EventHandler public void onInventoryClose(InventoryCloseEvent event) {
+        Player player = (Player) event.getPlayer();
+        Inventory inv = event.getInventory();
+        if(inv.getHolder() instanceof TableHolder holder) {
+            holder.dropItems(player,
+                    inv.getItem(1),
+                    inv.getItem(2),
+                    inv.getItem(10),
+                    inv.getItem(11),
+                    inv.getItem(12),
+                    inv.getItem(20)
+            );
         }
     }
 
@@ -71,7 +93,10 @@ public class InventoryListener implements Listener {
         if(event.getAction() == Action.RIGHT_CLICK_BLOCK && block != null) {
             Mechanic mechanic = OraxenBlocks.getOraxenBlock(block.getLocation());
             if(mechanic != null) {
-                if(mechanic.getItemID().equals("carpenter_table")) event.getPlayer().openInventory(new TableHolder().getInventory());
+                if(mechanic.getItemID().equals("carpenter_table")) {
+                    event.getPlayer().openInventory(new TableHolder().getInventory());
+                    event.setCancelled(true);
+                }
             }
         }
     }

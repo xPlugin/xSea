@@ -21,7 +21,7 @@ public class RecipesProvider {
     private final List<CarpenterRecipe> recipes = new ArrayList<>();
 
     public RecipesProvider() {
-        data = new Config("recipes", true);
+        data = new Config("recipes", true, false);
         ClassLogger.get(RecipesProvider.class).fine("Loaded recipes configuration");
     }
 

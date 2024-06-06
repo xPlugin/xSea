@@ -1,9 +1,37 @@
+carpenter_table:
+  type: paper
+  cmd: 1111
+  oraxen: carpenter_table
+  flags:
+    - hide_attributes
+  display:
+    name: Стол плотника
+    lore:
+      - '<blue>Modoru: Межсезонье</blue>'
 oak_plank:
   type: paper
   cmd: 1112
   flags:
     - hide_attributes
   display:
-    name: "Дубовая доска"
+    name: Дубовая доска
     lore:
-      - "<dark_blue>Modoru: Межсезонье</dark_blue>"
+      - '<blue>Modoru: Межсезонье</blue>'
+boat_bottom:
+  type: paper
+  cmd: 1113
+  flags:
+    - hide_attributes
+  display:
+    name: Дно лодки
+    lore:
+      - '<blue>Modoru: Межсезонье</blue>'
+fins:
+  type: leather_boots
+  color: "#000000"
+  flags:
+    - hide_enchants
+  enchantments:
+    - depth_strider:7
+  display:
+    name: Ласты
