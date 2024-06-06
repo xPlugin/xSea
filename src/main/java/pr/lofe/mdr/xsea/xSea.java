@@ -1,10 +1,6 @@
 package pr.lofe.mdr.xsea;
 
 import dev.jorel.commandapi.CommandAPI;
-import net.minecraft.core.Registry;
-import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.item.enchantment.Enchantment;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -16,18 +12,15 @@ import pr.lofe.mdr.xsea.command.SeaCommand;
 import pr.lofe.mdr.xsea.inv.CarpenterRecipe;
 import pr.lofe.mdr.xsea.inv.InventoryListener;
 import pr.lofe.mdr.xsea.item.ItemRegistry;
-import pr.lofe.mdr.xsea.item.WaterResistance;
 import pr.lofe.mdr.xsea.listener.BlockListener;
 import pr.lofe.mdr.xsea.listener.ItemListener;
 import pr.lofe.mdr.xsea.registry.RecipesProvider;
-import pr.lofe.mdr.xsea.util.EnchantHandler;
 
 import java.util.HashMap;
 
 public class xSea extends JavaPlugin {
 
     public static xSea I;
-    public Enchantment WATER_RESISTANCE;
 
     private RecipesProvider recipes;
     private ItemRegistry items;
@@ -39,10 +32,6 @@ public class xSea extends JavaPlugin {
         I = this;
 
         reloadData();
-
-        EnchantHandler.unfreezeRegistry();
-        WATER_RESISTANCE = Registry.register(BuiltInRegistries.ENCHANTMENT, "water_resistance", new WaterResistance());
-        EnchantHandler.freezeRegistry();
 
         ItemStack oak_plank = items.getItem("oak_plank");
         oak_plank.setAmount(8);
