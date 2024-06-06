@@ -9,6 +9,7 @@ import org.bukkit.inventory.ShapedRecipe;
 import org.bukkit.plugin.java.JavaPlugin;
 import pr.lofe.lib.xbase.text.TextWrapper;
 import pr.lofe.mdr.xsea.command.SeaCommand;
+import pr.lofe.mdr.xsea.enchant.WaterResistance;
 import pr.lofe.mdr.xsea.inv.CarpenterRecipe;
 import pr.lofe.mdr.xsea.inv.InventoryListener;
 import pr.lofe.mdr.xsea.item.ItemRegistry;
@@ -24,6 +25,8 @@ public class xSea extends JavaPlugin {
 
     private RecipesProvider recipes;
     private ItemRegistry items;
+
+    private WaterResistance WATER_RESISTANCE;
 
 
     @Override public void onEnable() {
@@ -42,6 +45,9 @@ public class xSea extends JavaPlugin {
             }});
         }};
         recipes.add(plank);
+
+        WATER_RESISTANCE = new WaterResistance();
+        Bukkit.getPluginManager().registerEvents(WATER_RESISTANCE, this);
 
         CarpenterRecipe bottom = new CarpenterRecipe(NamespacedKey.minecraft("boat_bottom"), items.getItem("boat_bottom")) {{
             setItems("LPPPL", new HashMap<>(){{
@@ -92,4 +98,5 @@ public class xSea extends JavaPlugin {
         return I.recipes;
     }
     public static ItemRegistry getItems() { return I.items; }
+    public static WaterResistance getEnchant() { return I.WATER_RESISTANCE; }
 }

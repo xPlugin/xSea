@@ -10,7 +10,10 @@ import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import pr.lofe.mdr.xsea.enchant.CustomEnchantment;
 import pr.lofe.mdr.xsea.xSea;
+
+import static org.bukkit.Material.AIR;
 
 public class SeaCommand extends Command {
 
@@ -27,6 +30,22 @@ public class SeaCommand extends Command {
                         }
                     }
                 }.src,
+
+                new Command("enchant") {
+                    @Override
+                    void execute(CommandSender sender, CommandArguments args) {
+                        Player player = (Player) args.get("player");
+                        assert player != null;
+                        ItemStack item = player.getInventory().getItemInMainHand();
+                        if(item.getType() != AIR) {
+                            int level = 1;
+                            if(args.get("level") instanceof Integer integer) level = integer;
+
+                            xSea.getEnchant().enchant(item, level, CustomEnchantment.GlintMethod.GlintOverride);
+                            player.sendMessage("Зачарование применено");
+                        }
+                    }
+                }.src.withArguments(new PlayerArgument("player")).withOptionalArguments(new IntegerArgument("level", 1)),
 
                 new Command("test") {
                     @Override
