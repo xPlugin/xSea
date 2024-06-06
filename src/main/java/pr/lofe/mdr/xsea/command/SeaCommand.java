@@ -9,8 +9,6 @@ import net.kyori.adventure.text.Component;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import pr.lofe.mdr.xsea.inv.TableHolder;
-import pr.lofe.mdr.xsea.item.ItemRegistry;
 import pr.lofe.mdr.xsea.xSea;
 
 public class SeaCommand extends Command {
@@ -18,16 +16,6 @@ public class SeaCommand extends Command {
     public SeaCommand() {
         super("xsea");
         src.withSubcommands(
-                new Command("table") {
-                    @Override
-                    protected void execute(CommandSender sender, CommandArguments args) {
-                        Player player = (Player) args.get("player");
-                        if(player != null) {
-                            player.openInventory(new TableHolder().getInventory());
-                        }
-                    }
-                }.src.withArguments(new PlayerArgument("player")),
-
                 new Command("reload") {
                     @Override
                     protected void execute(CommandSender sender, CommandArguments args) {

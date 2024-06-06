@@ -3,9 +3,7 @@ package pr.lofe.mdr.xsea;
 import dev.jorel.commandapi.CommandAPI;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.item.enchantment.DigDurabilityEnchantment;
 import net.minecraft.world.item.enchantment.Enchantment;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -43,7 +41,7 @@ public class xSea extends JavaPlugin {
         reloadData();
 
         EnchantHandler.unfreezeRegistry();
-        WATER_RESISTANCE = Registry.register(BuiltInRegistries.ENCHANTMENT, "water_resistance", new WaterResistance(Enchantment.Rarity.UNCOMMON, EquipmentSlot.MAINHAND));
+        WATER_RESISTANCE = Registry.register(BuiltInRegistries.ENCHANTMENT, "water_resistance", new WaterResistance());
         EnchantHandler.freezeRegistry();
 
         ItemStack oak_plank = items.getItem("oak_plank");
@@ -74,7 +72,6 @@ public class xSea extends JavaPlugin {
 
         ShapedRecipe recipe = new ShapedRecipe(NamespacedKey.minecraft("carpenter_table"), items.getItem("carpenter_table")){{
             shape("___", "ABC", "_D_");
-            setIngredient('_', Material.AIR);
             setIngredient('A', Material.WHITE_DYE);
             setIngredient('B', Material.PAPER);
             setIngredient('C', Material.BLUE_DYE);

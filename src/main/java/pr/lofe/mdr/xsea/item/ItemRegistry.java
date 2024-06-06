@@ -2,7 +2,6 @@ package pr.lofe.mdr.xsea.item;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextDecoration;
-import org.apache.commons.lang.StringUtils;
 import org.bukkit.Color;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -17,6 +16,7 @@ import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.persistence.PersistentDataType;
 import pr.lofe.lib.xbase.text.TextWrapper;
 import pr.lofe.mdr.xsea.config.Config;
+import pr.lofe.mdr.xsea.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -71,8 +71,10 @@ public class ItemRegistry {
 
             if(customModelData != -1) meta.setCustomModelData(customModelData);
             meta.displayName(textWithLanguage(rawName));
-            for(String flag: flags) {
-                meta.addItemFlags(ItemFlag.valueOf(flag.toUpperCase()));
+            for(String rawFlag: flags) {
+                ItemFlag flag = ItemFlag.valueOf(rawFlag.toUpperCase());
+                if(flag == ItemFlag.HIDE_ENCHANTS) meta.setEnchantmentGlintOverride(false);
+                meta.addItemFlags(flag);
             }
 
             assert pluginID != null;
