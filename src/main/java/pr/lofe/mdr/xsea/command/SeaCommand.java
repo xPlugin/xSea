@@ -6,6 +6,7 @@ import dev.jorel.commandapi.arguments.PlayerArgument;
 import dev.jorel.commandapi.arguments.TextArgument;
 import dev.jorel.commandapi.executors.CommandArguments;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -26,6 +27,20 @@ public class SeaCommand extends Command {
                         }
                     }
                 }.src,
+
+                new Command("test") {
+                    @Override
+                    void execute(CommandSender sender, CommandArguments args) {
+                        String input = args.getRaw("input");
+                        assert input != null;
+
+                        MiniMessage mm = MiniMessage.miniMessage();
+                        Component msg = Component.translatable(input);
+
+                        Component result = msg.append(Component.text("\n" + mm.serialize(msg)));
+                        sender.sendMessage(result);
+                    }
+                }.src.withArguments(new TextArgument("input")),
 
                 new Command("give") {
                     @Override
