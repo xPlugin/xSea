@@ -2,11 +2,18 @@ package pr.lofe.mdr.xsea.item;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextDecoration;
+import org.apache.commons.lang.StringUtils;
+import org.bukkit.Color;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
+import org.bukkit.Registry;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.inventory.meta.LeatherArmorMeta;
+import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.persistence.PersistentDataType;
 import pr.lofe.lib.xbase.text.TextWrapper;
 import pr.lofe.mdr.xsea.config.Config;
@@ -23,39 +30,58 @@ public class ItemRegistry {
     private final HashMap<String, ItemStack> items = new HashMap<>();
 
     public ItemRegistry() {
-        data = new Config("items", true);
+        data = new Config("items", true, false);
     }
 
     public void init() {
         items.clear();
         for(String str: data.getConfig().getKeys(false)) {
-            System.out.println(str);
             ConfigurationSection rawItem = data.getConfig().getConfigurationSection(str);
             assert rawItem != null;
             Material type = Material.valueOf(rawItem.getString("type", "air").toUpperCase());
 
             ItemStack item = new ItemStack(type);
             int customModelData = rawItem.getInt("cmd", -1);
-            String name = rawItem.getString("display.name", "");
-            String pluginID = rawItem.getString("oraxen", "");
+            String rawName = rawItem.getString("display.name", "");
+            String rawPluginID = rawItem.getString("oraxen", "");
+            String rawColor = rawItem.getString("color", "");
 
             List<String>
                     flags = rawItem.getStringList("flags"),
-                    lore  = rawItem.getStringList("display.lore");
+                    lore  = rawItem.getStringList("display.lore"),
+                    enchants = rawItem.getStringList("enchantments");
 
-            item.editMeta(meta -> {
-               if(customModelData != -1) meta.setCustomModelData(customModelData);
-               meta.displayName(textWithLanguage(name));
-               for(String flag: flags) {
-                   meta.addItemFlags(ItemFlag.valueOf(flag.toUpperCase()));
-               }
+            ItemMeta meta = item.getItemMeta();
 
-               if(!pluginID.isEmpty()) meta.getPersistentDataContainer().set(this.pluginID, PersistentDataType.STRING, pluginID);
+            if(!rawColor.isEmpty()) {
+                Color color = hexToColor(rawColor);
+                if(color != null) {
+                    if(meta instanceof LeatherArmorMeta lMeta) lMeta.setColor(color);
+                    else if(meta instanceof PotionMeta pMeta) pMeta.setColor(color);
+                }
+            }
 
-               List<Component> finalLore = new ArrayList<>();
-               for(String row: lore) finalLore.add(textWithLanguage(row));
-               meta.lore(finalLore);
-            });
+            for(String raw: enchants) {
+                String[] data = raw.split(":", 2);
+                Enchantment ench = Registry.ENCHANTMENT.get(NamespacedKey.minecraft(data[0]));
+                if(StringUtils.isNumeric(data[1]) && ench != null) {
+                    meta.addEnchant(ench, Integer.parseInt(data[1]), true);
+                }
+            }
+
+            if(customModelData != -1) meta.setCustomModelData(customModelData);
+            meta.displayName(textWithLanguage(rawName));
+            for(String flag: flags) {
+                meta.addItemFlags(ItemFlag.valueOf(flag.toUpperCase()));
+            }
+
+            assert pluginID != null;
+            if(!rawPluginID.isEmpty()) meta.getPersistentDataContainer().set(pluginID, PersistentDataType.STRING, rawPluginID);
+
+            List<Component> finalLore = new ArrayList<>();
+            for(String row: lore) finalLore.add(textWithLanguage(row));
+            meta.lore(finalLore);
+
             items.put(str, item);
         }
     }
@@ -77,6 +103,22 @@ public class ItemRegistry {
     private static Component textWithLanguage(String input) {
         if(input.startsWith("&lang:")) return Component.translatable(input.replaceFirst("&lang:", "")).decoration(TextDecoration.ITALIC, false);
         return TextWrapper.text(input).decoration(TextDecoration.ITALIC, false);
+    }
+
+    public static Color hexToColor(String hex) {
+        hex = hex.replace("#", "");
+        return switch (hex.length()) {
+            case 6 -> Color.fromRGB(
+                    Integer.valueOf(hex.substring(0, 2), 16),
+                    Integer.valueOf(hex.substring(2, 4), 16),
+                    Integer.valueOf(hex.substring(4, 6), 16));
+            case 8 -> Color.fromARGB(
+                    Integer.valueOf(hex.substring(6, 8), 16),
+                    Integer.valueOf(hex.substring(0, 2), 16),
+                    Integer.valueOf(hex.substring(2, 4), 16),
+                    Integer.valueOf(hex.substring(4, 6), 16));
+            default -> null;
+        };
     }
 
 }
