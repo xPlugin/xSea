@@ -11,6 +11,7 @@ import org.bukkit.enchantments.Enchantment;
 import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -222,6 +223,8 @@ public abstract class CustomEnchantment<IEvent extends Event> implements Listene
         BOW,
         CROSSBOW,
 
+        AFFECTED(HELMET, CHESTPLATE, LEGGINGS, BOOTS, SWORD, AXE, SHOVEL, PICKAXE, HOE),
+
         ROD;
 
         private final Material[] items;
@@ -232,6 +235,18 @@ public abstract class CustomEnchantment<IEvent extends Event> implements Listene
                 if(material.name().contains(this.name())) types.add(material);
             }
             items = types.toArray(new Material[0]);
+        }
+
+        ItemGroup(ItemGroup... parents) {
+            List<Material> types = new ArrayList<>();
+            for(ItemGroup group: parents) {
+                types.addAll(List.of(group.items));
+            }
+            items = types.toArray(new Material[0]);
+        }
+
+        public Material[] items() {
+            return items;
         }
 
         public boolean includes(Material type) {

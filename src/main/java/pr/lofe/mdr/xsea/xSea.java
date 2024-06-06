@@ -1,20 +1,23 @@
 package pr.lofe.mdr.xsea;
 
 import dev.jorel.commandapi.CommandAPI;
+import net.minecraft.world.inventory.EnchantmentMenu;
+import net.minecraft.world.inventory.GrindstoneMenu;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
+import org.bukkit.enchantments.EnchantmentOffer;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.ShapedRecipe;
 import org.bukkit.plugin.java.JavaPlugin;
 import pr.lofe.lib.xbase.text.TextWrapper;
 import pr.lofe.mdr.xsea.command.SeaCommand;
+import pr.lofe.mdr.xsea.enchant.EnchantmentHandler;
 import pr.lofe.mdr.xsea.enchant.WaterResistance;
 import pr.lofe.mdr.xsea.inv.CarpenterRecipe;
 import pr.lofe.mdr.xsea.inv.InventoryListener;
 import pr.lofe.mdr.xsea.item.ItemRegistry;
-import pr.lofe.mdr.xsea.listener.BlockListener;
-import pr.lofe.mdr.xsea.listener.ItemListener;
+import pr.lofe.mdr.xsea.listener.*;
 import pr.lofe.mdr.xsea.registry.RecipesProvider;
 
 import java.util.HashMap;
@@ -78,6 +81,8 @@ public class xSea extends JavaPlugin {
         Bukkit.getPluginManager().registerEvents(new InventoryListener(), this);
         Bukkit.getPluginManager().registerEvents(new ItemListener(), this);
         Bukkit.getPluginManager().registerEvents(new BlockListener(), this);
+        Bukkit.getPluginManager().registerEvents(new EnchantmentHandler(), this);
+        Bukkit.getPluginManager().registerEvents(new EntityListener(), this);
     }
 
     public void reloadData() {

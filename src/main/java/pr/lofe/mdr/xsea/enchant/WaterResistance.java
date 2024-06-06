@@ -31,7 +31,7 @@ public class WaterResistance extends CustomEnchantment<PlayerItemDamageEvent>
         Player player = event.getPlayer();
 
         Block block = player.getTargetBlock(null, 5);
-        if(block.getType() == Material.WATER) {
+        if(block.getType() == Material.WATER || player.getEyeLocation().getBlock().getType() == Material.WATER) {
             int enchantLevel = getEnchantLevel(item, this);
             int damage = event.getDamage();
 
