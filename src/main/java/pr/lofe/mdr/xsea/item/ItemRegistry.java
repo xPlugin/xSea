@@ -82,6 +82,8 @@ public class ItemRegistry {
             for(String row: lore) finalLore.add(textWithLanguage(row));
             meta.lore(finalLore);
 
+            item.setItemMeta(meta);
+
             items.put(str, item);
         }
     }
