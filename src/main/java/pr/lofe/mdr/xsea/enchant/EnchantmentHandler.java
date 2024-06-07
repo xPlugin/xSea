@@ -27,8 +27,8 @@ public class EnchantmentHandler implements Listener {
         Material type1 = type(item1), type2 = type(item2);
         if(type1 == Material.AIR || type2 == Material.AIR) {
             ItemStack item = item1 == null ? item2.clone() : item1.clone();
-            if(CustomEnchantment.hasEnchant(item, xSea.getEnchant())) {
-                CustomEnchantment.removeEnchant(item, xSea.getEnchant());
+            if(CustomEnchantment.hasEnchant(item, xSea.WATER_RESISTANCE)) {
+                CustomEnchantment.removeEnchant(item, xSea.WATER_RESISTANCE);
                 event.setResult(item);
             }
         }
@@ -41,7 +41,7 @@ public class EnchantmentHandler implements Listener {
                 if (temp == Enchantment.UNBREAKING) {
                     if(RandomUtil.nextBool(50)) {
                         int level = enchants.remove(temp);
-                        Bukkit.getScheduler().runTaskLater(xSea.I, () -> xSea.getEnchant().enchant(event.getItem(), level, CustomEnchantment.GlintMethod.GlintOverride), 0L);
+                        Bukkit.getScheduler().runTaskLater(xSea.I, () -> xSea.WATER_RESISTANCE.enchant(event.getItem(), level, CustomEnchantment.GlintMethod.GlintOverride), 0L);
                     }
                 }
             }

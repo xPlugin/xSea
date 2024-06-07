@@ -41,7 +41,7 @@ public class SeaCommand extends Command {
                             int level = 1;
                             if(args.get("level") instanceof Integer integer) level = integer;
 
-                            xSea.getEnchant().enchant(item, level, CustomEnchantment.GlintMethod.GlintOverride);
+                            xSea.WATER_RESISTANCE.enchant(item, level, CustomEnchantment.GlintMethod.GlintOverride);
                             player.sendMessage("Зачарование применено");
                         }
                     }

@@ -1,20 +1,21 @@
 {
   "display": {
     "icon": {
-      "item": "minecraft:heart_of_the_sea",
-      "data": 0
+      "id": "minecraft:paper",
+      "components": {
+        "minecraft:custom_model_data": 1113
+      }
     },
     "title": {
-      "text": "Главное не склеить..."
+      "text": "Кто проживает на дне океана?"
     },
     "description": {
-      "text": "Получите ласты"
+      "text": "Соберите из досок дно лодки."
     },
     "frame": "task",
     "show_toast": true,
     "announce_to_chat": false,
-    "hidden": false,
-    "background": "minecraft:textures/gui/advancements/backgrounds/stone.png"
+    "hidden": false
   },
   "criteria": {
     "root": {
@@ -26,5 +27,5 @@
       "root"
     ]
   ],
-  "parent": "modoru:root"
+  "parent": "modoru:carpenter_table"
 }

@@ -91,13 +91,22 @@ public class ItemRegistry {
     }
 
     public ItemStack getItem(String string) {
-        return items.get(string);
+        return items.get(string).clone();
     }
     public ItemStack getItemByCMD(int customModelData) {
         for(ItemStack stack: items.values()) {
             if(stack.getItemMeta().hasCustomModelData() && stack.getItemMeta().getCustomModelData() == customModelData) return stack;
         }
         return null;
+    }
+    public String getKey(ItemStack item) {
+        if (item == null) return "NULL";
+        for(String str: items.keySet()) {
+            if(item.getItemMeta().hasCustomModelData() && item.getItemMeta().getCustomModelData() == items.get(str).getItemMeta().getCustomModelData()) {
+                return str;
+            }
+        }
+        return "NULL";
     }
 
     public List<String> itemsIDs() {

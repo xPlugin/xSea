@@ -1,11 +1,10 @@
 {
   "display": {
     "icon": {
-      "item": "minecraft:heart_of_the_sea",
-      "data": 0
+      "id": "minecraft:heart_of_the_sea"
     },
     "title": {
-      "text": "§9Modoru: Межсезонье"
+      "text": "Modoru: Межсезонье"
     },
     "description": {
       "text": "Выполняйте ачивки данной вкладки, продвигаясь в развитии уникального геймплея."
@@ -14,7 +13,7 @@
     "show_toast": true,
     "announce_to_chat": false,
     "hidden": false,
-    "background": "minecraft:textures/gui/advancements/backgrounds/stone.png"
+    "background": "minecraft:textures/block/dark_prismarine.png"
   },
   "criteria": {
     "root": {
