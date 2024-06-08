@@ -19,9 +19,8 @@ public class EntityListener implements Listener {
     @EventHandler public void tick(ServerTickEndEvent event) {
         for(Player player: Bukkit.getOnlinePlayers()) {
             if(player.isInWater()) {
-                player.sendActionBar(Component.text(player.getMaximumAir()));
                 ItemStack item = player.getInventory().getBoots(); // getBoobs
-                if(xSea.getItems().getKey(item).equals("fins")) {
+                if(xSea.getItems().getKey(item).equals("flippers")) {
                     PotionEffect effect = player.getPotionEffect(PotionEffectType.DOLPHINS_GRACE);
                     if(effect == null) effect = new PotionEffect(PotionEffectType.DOLPHINS_GRACE, 2, 0, true, false, false);
                     else if (!effect.hasIcon()) effect = effect.withDuration(2);
@@ -31,13 +30,6 @@ public class EntityListener implements Listener {
                 }
             }
         }
-    }
-
-    @EventHandler
-    public void onPlayerJoin(PlayerJoinEvent event) {
-        Player player = event.getPlayer();
-        player.setMaximumAir(700);
-        player.sendMessage(player.getMaximumAir() + " - value");
     }
 
 }
