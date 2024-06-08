@@ -25,7 +25,6 @@ public class WaterResistance extends CustomEnchantment<PlayerItemDamageEvent>
     @EventHandler
     @Override
     void effect(PlayerItemDamageEvent event) {
-        System.out.println("event called");
 
         ItemStack item = event.getItem();
         Player player = event.getPlayer();
