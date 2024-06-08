@@ -45,7 +45,7 @@ public class SeaCommand extends Command {
                                     if(commit == null) throw new IOException();
 
                                     sender.sendMessage(TextWrapper.text(String.format(
-                                            "Версия плагина... Commit: <blue><click:open_url:'https://github.com/justlofe/xGartic/commit/%s'>%s</click></blue>",
+                                            "Версия плагина... Commit: <blue><click:open_url:'https://github.com/justlofe/xSea/commit/%s'>%s</click></blue>",
                                             commit,
                                             commit
                                     )));
