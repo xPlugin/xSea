@@ -10,8 +10,14 @@ import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import pr.lofe.lib.xbase.text.TextWrapper;
 import pr.lofe.mdr.xsea.enchant.CustomEnchantment;
 import pr.lofe.mdr.xsea.xSea;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 
 import static org.bukkit.Material.AIR;
 
@@ -20,6 +26,43 @@ public class SeaCommand extends Command {
     public SeaCommand() {
         super("xsea");
         src.withSubcommands(
+                new Command("git") {
+                    @Override
+                    void execute(CommandSender sender, CommandArguments args) {
+                        String arg = args.getRaw("arg");
+                        assert arg != null;
+                        switch (arg) {
+                            case "version" -> {
+                                InputStream in = xSea.I.getResource("version.txt");
+                                if (in == null) {
+                                    sender.sendMessage(TextWrapper.text("Невозможно получить версию. Плагин забилжен на коленках у араба."));
+                                    return;
+                                }
+
+                                BufferedReader reader = new BufferedReader(new InputStreamReader(in));
+                                try {
+                                    String commit = reader.readLine();
+                                    if(commit == null) throw new IOException();
+
+                                    sender.sendMessage(TextWrapper.text(String.format(
+                                            "Версия плагина... Commit: <blue><click:open_url:'https://github.com/justlofe/xGartic/commit/%s'>%s</click></blue>",
+                                            commit,
+                                            commit
+                                    )));
+                                } catch (IOException ignored) {
+                                    sender.sendMessage(TextWrapper.text("Невозможно получить версию. Плагин забилжен на коленках у араба."));
+                                }
+                            }
+                            case "url" -> {
+                                sender.sendMessage(TextWrapper.text(
+                                        "Repository URL: <blue><click:open_url:'https://github.com/justlofe/xGartic/'>[GitHub]</click></blue>"
+                                ));
+                            }
+                            default -> {}
+                        }
+                    }
+                }.src.withArguments(new TextArgument("arg").replaceSuggestions(ArgumentSuggestions.strings("version", "url"))),
+
                 new Command("reload") {
                     @Override
                     protected void execute(CommandSender sender, CommandArguments args) {
