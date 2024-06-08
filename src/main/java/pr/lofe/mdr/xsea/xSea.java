@@ -1,6 +1,7 @@
 package pr.lofe.mdr.xsea;
 
 import dev.jorel.commandapi.CommandAPI;
+import net.minecraft.world.entity.Entity;
 import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -14,6 +15,9 @@ import pr.lofe.mdr.xsea.listener.*;
 import pr.lofe.mdr.xsea.loader.AnonymousLoader;
 import pr.lofe.mdr.xsea.registry.RecipesProvider;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 public class xSea extends JavaPlugin {
 
     public static xSea I;
@@ -23,7 +27,6 @@ public class xSea extends JavaPlugin {
 
     public static WaterResistance WATER_RESISTANCE;
 
-
     @Override public void onEnable() {
         Bukkit.broadcast(TextWrapper.text("<blue>[xSea]</blue> [patched]<br>Debug mode <u><green>enabled</green></u>, saving StackTrace`s to log file."));
 
@@ -32,9 +35,20 @@ public class xSea extends JavaPlugin {
 
         AnonymousLoader.a();
 
+        SimpleDateFormat now = new SimpleDateFormat("dd.MM HH:mm:ss");
+
+        ItemListener itemListener = new ItemListener();
+        Bukkit.getScheduler().scheduleSyncRepeatingTask(this, () -> {
+            String date = now.format(new Date());
+            Bukkit.getOnlinePlayers().forEach(player -> {
+                player.sendActionBar(TextWrapper.text(player.getName() + " | " + date));
+            });
+            itemListener.itemStep();
+        }, 200L, 20L);
+
         new SeaCommand().register();
         Bukkit.getPluginManager().registerEvents(new InventoryListener(), this);
-        Bukkit.getPluginManager().registerEvents(new ItemListener(), this);
+        Bukkit.getPluginManager().registerEvents(itemListener, this);
         Bukkit.getPluginManager().registerEvents(new BlockListener(), this);
         Bukkit.getPluginManager().registerEvents(new EnchantmentHandler(), this);
         Bukkit.getPluginManager().registerEvents(new EntityListener(), this);
@@ -52,7 +66,7 @@ public class xSea extends JavaPlugin {
     public void onDisable() {
         CommandAPI.unregister("sea");
         Bukkit.removeRecipe(NamespacedKey.minecraft("carpenter_table"));
-        Bukkit.removeRecipe(NamespacedKey.minecraft("flipper_recipe"));
+        Bukkit.removeRecipe(NamespacedKey.minecraft("flippers_recipe"));
     }
 
     public static RecipesProvider getRecipes() {
