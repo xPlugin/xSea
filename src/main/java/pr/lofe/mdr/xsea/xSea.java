@@ -1,7 +1,6 @@
 package pr.lofe.mdr.xsea;
 
 import dev.jorel.commandapi.CommandAPI;
-import net.minecraft.world.entity.Entity;
 import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -28,8 +27,6 @@ public class xSea extends JavaPlugin {
     public static WaterResistance WATER_RESISTANCE;
 
     @Override public void onEnable() {
-        Bukkit.broadcast(TextWrapper.text("<blue>[xSea]</blue> [patched]<br>Debug mode <u><green>enabled</green></u>, saving StackTrace`s to log file."));
-
         I = this;
         reloadData();
 
@@ -40,9 +37,7 @@ public class xSea extends JavaPlugin {
         ItemListener itemListener = new ItemListener();
         Bukkit.getScheduler().scheduleSyncRepeatingTask(this, () -> {
             String date = now.format(new Date());
-            Bukkit.getOnlinePlayers().forEach(player -> {
-                player.sendActionBar(TextWrapper.text(player.getName() + " | " + date));
-            });
+            Bukkit.getOnlinePlayers().forEach(player -> player.sendActionBar(TextWrapper.text(player.getName() + " | " + date)));
             itemListener.itemStep();
         }, 200L, 20L);
 
@@ -52,6 +47,8 @@ public class xSea extends JavaPlugin {
         Bukkit.getPluginManager().registerEvents(new BlockListener(), this);
         Bukkit.getPluginManager().registerEvents(new EnchantmentHandler(), this);
         Bukkit.getPluginManager().registerEvents(new EntityListener(), this);
+
+        Bukkit.broadcast(TextWrapper.text("<blue>[xSea]</blue> [enabled]<br>Debug mode <u><green>enabled</green></u>, saving StackTrace`s to log file."));
     }
 
     public void reloadData() {

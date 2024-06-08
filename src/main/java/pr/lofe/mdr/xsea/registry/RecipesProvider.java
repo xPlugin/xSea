@@ -51,7 +51,6 @@ public class RecipesProvider {
             boolean isIt = true;
             for (int i = 0; i < 5; i++) {
                 if (!isSimilar(tempM[i], matrix[i])) {
-                    System.out.println("there s a break at " + i);
                     isIt = false;
                     break;
                 }
