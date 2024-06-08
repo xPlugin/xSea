@@ -33,7 +33,10 @@ public class ItemListener implements Listener {
             for(ItemStack item: player.getInventory().getContents()) {
                 String id = xSea.getItems().getKey(item);
                 if(!"NULL".equals(id)) {
-                    Advancement tmp = Bukkit.getAdvancement(NamespacedKey.fromString("modoru:" + id));
+                    NamespacedKey key = NamespacedKey.fromString("modoru:" + id);
+                    if(key == null) return;
+
+                    Advancement tmp = Bukkit.getAdvancement(key);
                     if(tmp != null) {
                         AdvancementProgress adv = player.getAdvancementProgress(tmp);
                         for(String str: tmp.getCriteria()) adv.awardCriteria(str);

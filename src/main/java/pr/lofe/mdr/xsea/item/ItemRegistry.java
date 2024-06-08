@@ -14,6 +14,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
 import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.persistence.PersistentDataType;
+import org.jetbrains.annotations.NotNull;
 import pr.lofe.lib.xbase.text.TextWrapper;
 import pr.lofe.mdr.xsea.config.Config;
 import pr.lofe.mdr.xsea.util.StringUtils;
@@ -24,7 +25,7 @@ import java.util.List;
 
 public class ItemRegistry {
 
-    public static final NamespacedKey pluginID = NamespacedKey.fromString("oraxen:id");
+    public static final @NotNull NamespacedKey pluginID = NamespacedKey.fromString("oraxen:id");
 
     private final Config data;
     private final HashMap<String, ItemStack> items = new HashMap<>();
@@ -77,7 +78,6 @@ public class ItemRegistry {
                 meta.addItemFlags(flag);
             }
 
-            assert pluginID != null;
             if(!rawPluginID.isEmpty()) meta.getPersistentDataContainer().set(pluginID, PersistentDataType.STRING, rawPluginID);
 
             List<Component> finalLore = new ArrayList<>();

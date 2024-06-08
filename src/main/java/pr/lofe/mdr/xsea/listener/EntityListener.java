@@ -1,17 +1,13 @@
 package pr.lofe.mdr.xsea.listener;
 
 import com.destroystokyo.paper.event.server.ServerTickEndEvent;
-import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.entity.EntityAirChangeEvent;
-import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
-import pr.lofe.lib.xbase.text.TextWrapper;
 import pr.lofe.mdr.xsea.xSea;
 
 public class EntityListener implements Listener {

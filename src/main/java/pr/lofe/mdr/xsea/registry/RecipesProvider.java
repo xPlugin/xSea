@@ -7,7 +7,6 @@ import org.bukkit.inventory.Recipe;
 import org.bukkit.inventory.meta.ItemMeta;
 import pr.lofe.mdr.xsea.config.Config;
 import pr.lofe.mdr.xsea.inv.CarpenterRecipe;
-import pr.lofe.mdr.xsea.log.ClassLogger;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -22,7 +21,6 @@ public class RecipesProvider {
 
     public RecipesProvider() {
         data = new Config("recipes", true, false);
-        ClassLogger.get(RecipesProvider.class).fine("Loaded recipes configuration");
     }
 
     public void init() {

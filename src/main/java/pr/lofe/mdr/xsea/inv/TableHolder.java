@@ -26,7 +26,7 @@ public class TableHolder implements InventoryHolder {
         meta.displayName(TextWrapper.text(""));
         meta.setCustomModelData(1002);
         setItemMeta(meta);
-    }};;
+    }};
 
     @Override public @NotNull Inventory getInventory() {
         Inventory inv = Bukkit.createInventory(this, 27, TextWrapper.text("<white>ꐮꑽ</white>"));

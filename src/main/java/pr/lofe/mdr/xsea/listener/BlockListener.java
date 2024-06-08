@@ -14,15 +14,17 @@ public class BlockListener implements Listener {
 
     @EventHandler public void onPlayerInteract(PlayerInteractEvent event) {
         Block block = event.getClickedBlock();
-        if(event.getAction() == Action.RIGHT_CLICK_BLOCK && block.getType() == Material.DIRT) {
+        if(event.getAction() == Action.RIGHT_CLICK_BLOCK) {
             assert block != null;
-            Block upwards = block.getRelative(0, 1, 0);
-            if(upwards.getType() != Material.AIR) return;
+            if(block.getType() == Material.DIRT) {
+                Block upwards = block.getRelative(0, 1, 0);
+                if(upwards.getType() != Material.AIR) return;
 
-            ItemStack item = event.getItem();
-            if(item != null && item.getType() == Material.BONE_MEAL) {
-                event.setUseItemInHand(Event.Result.ALLOW);
-                block.setType(Material.GRASS_BLOCK);
+                ItemStack item = event.getItem();
+                if(item != null && item.getType() == Material.BONE_MEAL) {
+                    event.setUseItemInHand(Event.Result.ALLOW);
+                    block.setType(Material.GRASS_BLOCK);
+                }
             }
         }
     }

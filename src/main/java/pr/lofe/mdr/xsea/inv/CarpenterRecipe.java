@@ -1,11 +1,11 @@
 package pr.lofe.mdr.xsea.inv;
 
-import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.HashMap;
 
+@SuppressWarnings("unused")
 public class CarpenterRecipe {
 
     private final NamespacedKey key;
@@ -29,8 +29,8 @@ public class CarpenterRecipe {
         return key;
     }
 
-    public boolean setItems(String shape, HashMap<Character, ItemStack> materials) {
-        if(shape.length() != 5) return false;
+    public void setItems(String shape, HashMap<Character, ItemStack> materials) {
+        if(shape.length() != 5) return;
 
         ItemStack[] pattern = new ItemStack[5];
         for (Character ch: materials.keySet()) {
@@ -39,7 +39,6 @@ public class CarpenterRecipe {
             }
         }
         this.materials = pattern;
-        return true;
     }
 
     public ItemStack getRecipeItem(int index) {

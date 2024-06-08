@@ -3,10 +3,8 @@ package pr.lofe.mdr.xsea.inv;
 import io.th0rgal.oraxen.api.OraxenBlocks;
 import io.th0rgal.oraxen.mechanics.Mechanic;
 import org.bukkit.Bukkit;
-import org.bukkit.Location;
 import org.bukkit.SoundCategory;
 import org.bukkit.block.Block;
-import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -18,11 +16,7 @@ import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.util.Vector;
 import pr.lofe.mdr.xsea.xSea;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class InventoryListener implements Listener {
 
