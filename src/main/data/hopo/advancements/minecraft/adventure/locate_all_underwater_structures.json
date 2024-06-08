@@ -1,0 +1,177 @@
+{
+	"display": {
+		"icon": {
+			"id": "minecraft:heart_of_the_sea"
+		},
+		"title": {
+			"translate": "Sinking Oceanographers"
+		},
+		"description": {
+			"translate": "Find all the underwater structures. Note: This include new ones that you might see before..."
+		},
+		"frame": "goal",
+		"show_toast": true,
+		"announce_to_chat": true,
+		"hidden": false
+	},
+	"parent": "minecraft:adventure/throw_trident",
+	"criteria": {
+		"locate_underwater_city": {
+			"trigger": "minecraft:location",
+			"conditions": {
+				"player": [
+					{
+						"condition": "minecraft:entity_properties",
+						"entity": "this",
+						"predicate": {
+							"location": {
+								"structures": "hopo:underwater/underwater_city"
+							}
+						}
+					}
+				]
+			}
+		},
+		"locate_underwater_fossil": {
+			"trigger": "minecraft:location",
+			"conditions": {
+				"player": [
+					{
+						"condition": "minecraft:entity_properties",
+						"entity": "this",
+						"predicate": {
+							"location": {
+								"structures": "hopo:underwater/underwater_fossils"
+							}
+						}
+					}
+				]
+			}
+		},
+		"locate_underwater_small_ruins": {
+			"trigger": "minecraft:location",
+			"conditions": {
+				"player": [
+					{
+						"condition": "minecraft:entity_properties",
+						"entity": "this",
+						"predicate": {
+							"location": {
+								"structures": "hopo:underwater/underwater_small_ruins"
+							}
+						}
+					}
+				]
+			}
+		},
+		"locate_underwater_warm_small_ruins": {
+			"trigger": "minecraft:location",
+			"conditions": {
+				"player": [
+					{
+						"condition": "minecraft:entity_properties",
+						"entity": "this",
+						"predicate": {
+							"location": {
+								"structures": "hopo:underwater/underwater_warm_small_ruins"
+							}
+						}
+					}
+				]
+			}
+		},
+		"locate_monument": {
+			"trigger": "minecraft:location",
+			"conditions": {
+				"player": [
+					{
+						"condition": "minecraft:entity_properties",
+						"entity": "this",
+						"predicate": {
+							"location": {
+								"structures": "minecraft:monument"
+							}
+						}
+					}
+				]
+			}
+		},
+		"locate_shipwreck": {
+			"trigger": "minecraft:location",
+			"conditions": {
+				"player": [
+					{
+						"condition": "minecraft:entity_properties",
+						"entity": "this",
+						"predicate": {
+							"location": {
+								"structures": "#minecraft:shipwreck"
+							}
+						}
+					}
+				]
+			}
+		},
+		"locate_ruin_cold": {
+			"trigger": "minecraft:location",
+			"conditions": {
+				"player": [
+					{
+						"condition": "minecraft:entity_properties",
+						"entity": "this",
+						"predicate": {
+							"location": {
+								"structures": "minecraft:ocean_ruin_cold"
+							}
+						}
+					}
+				]
+			}
+		},
+		"locate_ruin_warm": {
+			"trigger": "minecraft:location",
+			"conditions": {
+				"player": [
+					{
+						"condition": "minecraft:entity_properties",
+						"entity": "this",
+						"predicate": {
+							"location": {
+								"structures": "minecraft:ocean_ruin_warm"
+							}
+						}
+					}
+				]
+			}
+		}
+	},
+	"requirements": [
+		[
+			"locate_underwater_city"
+		],
+		[
+			"locate_underwater_fossil"
+		],
+		[
+			"locate_underwater_small_ruins"
+		],
+		[
+			"locate_underwater_warm_small_ruins"
+		],
+		[
+			"locate_monument"
+		],
+		[
+			"locate_shipwreck"
+		],
+		[
+			"locate_ruin_cold"
+		],
+		[
+			"locate_ruin_warm"
+		]
+	],
+	"rewards": {
+		"experience": 555
+	}
+}
