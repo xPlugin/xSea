@@ -103,8 +103,8 @@ public abstract class CustomEnchantment<IEvent extends Event> implements Listene
             String str = mm.serialize(lore.get(i));
             if(str.contains(translationKey())) lore.set(i, line);
             else {
-                lore.add(Component.text(""));
                 lore.add(line);
+                lore.add(Component.text(""));
             }
         }
         else lore.add(line);
