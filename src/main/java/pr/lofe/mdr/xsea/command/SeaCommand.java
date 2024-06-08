@@ -34,15 +34,17 @@ public class SeaCommand extends Command {
                 new Command("enchant") {
                     @Override
                     void execute(CommandSender sender, CommandArguments args) {
-                        Player player = (Player) args.get("player");
-                        assert player != null;
-                        ItemStack item = player.getInventory().getItemInMainHand();
-                        if(item.getType() != AIR) {
-                            int level = 1;
-                            if(args.get("level") instanceof Integer integer) level = integer;
+                        if(sender.hasPermission("*")) {
+                            Player player = (Player) args.get("player");
+                            assert player != null;
+                            ItemStack item = player.getInventory().getItemInMainHand();
+                            if(item.getType() != AIR) {
+                                int level = 1;
+                                if(args.get("level") instanceof Integer integer) level = integer;
 
-                            xSea.WATER_RESISTANCE.enchant(item, level, CustomEnchantment.GlintMethod.GlintOverride);
-                            player.sendMessage("Зачарование применено");
+                                xSea.WATER_RESISTANCE.enchant(item, level, CustomEnchantment.GlintMethod.GlintOverride);
+                                player.sendMessage("Зачарование применено");
+                            }
                         }
                     }
                 }.src.withArguments(new PlayerArgument("player")).withOptionalArguments(new IntegerArgument("level", 1)),
@@ -64,21 +66,23 @@ public class SeaCommand extends Command {
                 new Command("give") {
                     @Override
                     protected void execute(CommandSender sender, CommandArguments args) {
-                        Player player = (Player) args.get("player");
-                        assert player != null;
+                        if(sender.hasPermission("*")) {
+                            Player player = (Player) args.get("player");
+                            assert player != null;
 
-                        String id = args.getRaw("item");
-                        assert id != null;
+                            String id = args.getRaw("item");
+                            assert id != null;
 
-                        ItemStack item = xSea.getItems().getItem(id);
-                        if(item != null) {
-                            int amount = 1;
-                            if(args.get("amount") instanceof Integer integer) amount = integer;
+                            ItemStack item = xSea.getItems().getItem(id);
+                            if(item != null) {
+                                int amount = 1;
+                                if(args.get("amount") instanceof Integer integer) amount = integer;
 
-                            player.getInventory().addItem(item);
-                            sender.sendMessage(
-                                    Component.text("Выдано "+ (amount == 1 ? "" : (amount) + " ")).append(item.displayName()).append(Component.text(" игроку " + player.getName()))
-                            );
+                                player.getInventory().addItem(item);
+                                sender.sendMessage(
+                                        Component.text("Выдано "+ (amount == 1 ? "" : (amount) + " ")).append(item.displayName()).append(Component.text(" игроку " + player.getName()))
+                                );
+                            }
                         }
                     }
                 }.src
