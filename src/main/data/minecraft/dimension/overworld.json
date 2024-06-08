@@ -3146,6 +3146,66 @@
             },
             "offset": 0
           }
+        },
+        {
+          "biome": "modoru:magmatic_caverns",
+          "parameters": {
+            "temperature": [
+              -1,
+              1
+            ],
+            "humidity": [
+              -1,
+              1
+            ],
+            "continentalness": [
+              0.7,
+              1
+            ],
+            "erosion": [
+              -1,
+              -0.85
+            ],
+            "weirdness": [
+              -1,
+              1
+            ],
+            "depth": [
+              0.75,
+              1.1
+            ],
+            "offset": 0
+          }
+        },
+        {
+          "biome": "modoru:magmatic_caverns",
+          "parameters": {
+            "temperature": [
+              -1,
+              1
+            ],
+            "humidity": [
+              -1,
+              1
+            ],
+            "continentalness": [
+              -1.1,
+              -1
+            ],
+            "erosion": [
+              -1,
+              1
+            ],
+            "weirdness": [
+              -1,
+              0
+            ],
+            "depth": [
+              0.75,
+              1.1
+            ],
+            "offset": 0
+          }
         }
       ]
     }
