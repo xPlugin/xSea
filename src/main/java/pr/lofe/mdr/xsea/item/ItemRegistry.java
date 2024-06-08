@@ -24,7 +24,7 @@ import java.util.List;
 
 public class ItemRegistry {
 
-    private static final NamespacedKey pluginID = NamespacedKey.fromString("oraxen:id");
+    public static final NamespacedKey pluginID = NamespacedKey.fromString("oraxen:id");
 
     private final Config data;
     private final HashMap<String, ItemStack> items = new HashMap<>();
