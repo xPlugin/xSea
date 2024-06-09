@@ -35,10 +35,12 @@ public class xSea extends JavaPlugin {
         SimpleDateFormat now = new SimpleDateFormat("dd.MM HH:mm:ss");
 
         ItemListener itemListener = new ItemListener();
+        EntityListener entityListener = new EntityListener();
         Bukkit.getScheduler().scheduleSyncRepeatingTask(this, () -> {
             String date = now.format(new Date());
             Bukkit.getOnlinePlayers().forEach(player -> player.sendActionBar(TextWrapper.text(player.getName() + " | " + date)));
             itemListener.itemStep();
+            entityListener.damage();
         }, 200L, 20L);
 
         new SeaCommand().register();
@@ -46,7 +48,7 @@ public class xSea extends JavaPlugin {
         Bukkit.getPluginManager().registerEvents(itemListener, this);
         Bukkit.getPluginManager().registerEvents(new BlockListener(), this);
         Bukkit.getPluginManager().registerEvents(new EnchantmentHandler(), this);
-        Bukkit.getPluginManager().registerEvents(new EntityListener(), this);
+        Bukkit.getPluginManager().registerEvents(entityListener, this);
 
         Bukkit.broadcast(TextWrapper.text("<blue>[xSea]</blue> [enabled]<br>Debug mode <u><green>enabled</green></u>, saving StackTrace`s to log file."));
     }

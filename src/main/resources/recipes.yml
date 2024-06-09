@@ -1,2 +1,10 @@
-disabled: {}
-custom:
+disabled:
+  - oak_boat
+  - spruce_boat
+  - birch_boat
+  - jungle_boat
+  - acacia_boat
+  - dark_oak_boat
+  - cherry_boat
+  - mangrove_boat
+  - bamboo_raft

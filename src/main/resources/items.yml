@@ -26,12 +26,32 @@ boat_bottom:
     name: Дно лодки
     lore:
       - '<blue>Modoru: Межсезонье</blue>'
-fins:
+flippers:
   type: leather_boots
-  color: "#000000"
+  color: "#19FFFF"
+  cmd: 1000
   flags:
+    - hide_dye
     - hide_enchants
   enchantments:
-    - depth_strider:7
+    - depth_strider:1
   display:
     name: Ласты
+  lore:
+    - '<blue>Modoru: Межсезонье</blue>'
+
+oxygen_tank_light:
+  type: paper
+  display:
+    name: Кислородный баллон
+    lore:
+      - '<blue>Modoru: Межсезонье</blue>'
+  cmd: 1114
+
+oxygen_tank:
+  type: paper
+  display:
+    name: Тяжёлый кислородный баллон
+    lore:
+      - '<blue>Modoru: Межсезонье</blue>'
+  cmd: 1115

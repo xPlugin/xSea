@@ -49,6 +49,9 @@ public class EnchantmentHandler implements Listener {
         }
     }
 
+
+    // TODO
+    // Не работает, переписать
     @EventHandler public void onPrepareAnvil(PrepareAnvilEvent event) {
         AnvilInventory inv = event.getInventory();
 
