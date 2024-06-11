@@ -102,8 +102,11 @@ public class ItemRegistry {
     public String getKey(ItemStack item) {
         if (item == null) return "NULL";
         for(String str: items.keySet()) {
-            if(item.getItemMeta().hasCustomModelData() && item.getItemMeta().getCustomModelData() == items.get(str).getItemMeta().getCustomModelData()) {
-                return str;
+            ItemStack temp = items.get(str);
+            if(temp.getType() == item.getType()) {
+                if(item.getItemMeta().hasCustomModelData() && item.getItemMeta().getCustomModelData() == temp.getItemMeta().getCustomModelData()) {
+                    return str;
+                }
             }
         }
         return "NULL";

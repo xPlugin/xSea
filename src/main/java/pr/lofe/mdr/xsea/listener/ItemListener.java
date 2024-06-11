@@ -19,12 +19,9 @@ public class ItemListener implements Listener {
     @EventHandler public void onPlayerAttemptPickupItem(PlayerAttemptPickupItemEvent event) {
         Item item = event.getItem();
         ItemStack stack = item.getItemStack();
-        ItemMeta meta = stack.getItemMeta();
-        if(meta != null && meta.hasCustomModelData()) {
-            if(meta.getPersistentDataContainer().has(ItemRegistry.pluginID)) {
-                ItemStack newItem = xSea.getItems().getItemByCMD(meta.getCustomModelData());
-                if(newItem != null) item.setItemStack(newItem);
-            }
+        String id = xSea.getItems().getKey(stack);
+        if(id != null && stack.getItemMeta().getPersistentDataContainer().has(ItemRegistry.pluginID)) {
+            item.setItemStack(stack);
         }
     }
 
