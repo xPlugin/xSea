@@ -77,9 +77,7 @@ public class EntityListener implements Listener {
             int bubbleVolume = balloonCapacity / 10;
             int bubbles = (currentAmount / bubbleVolume * 30);
 
-            if(inWater) {
-                if(currentAmount >= 0) currentAmount--;
-            }
+            if(inWater && currentAmount >= 0) currentAmount--;
             else if(currentAmount < balloonCapacity) currentAmount += 3;
             airTick.put(player, currentAmount);
 
