@@ -73,7 +73,7 @@ public class EntityListener implements Listener {
                 }
             }
 
-            if(player.getRemainingAir() > 0 && inWater) player.setRemainingAir(player.getRemainingAir() + 1);
+            // if(player.getRemainingAir() > 0 && inWater) player.setRemainingAir(player.getRemainingAir() + 1);
             ItemStack balloon = player.getInventory().getItem(9);
 
             int balloonCapacity = 700;
@@ -93,7 +93,7 @@ public class EntityListener implements Listener {
 
             if(inWater && currentAmount >= 0) currentAmount--;
             else if(currentAmount < balloonCapacity) currentAmount += 3;
-            airTick.put(player, currentAmount);
+            airTick.put(player, currentAmount + 1);
 
             player.setRemainingAir(bubbles);
         }
