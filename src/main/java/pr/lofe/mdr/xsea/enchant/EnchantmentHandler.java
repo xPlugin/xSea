@@ -57,9 +57,9 @@ public class EnchantmentHandler implements Listener {
 
         WaterResistance WR = xSea.WATER_RESISTANCE;
         ItemStack first = inv.getFirstItem(), second = inv.getSecondItem();
-        if (first == null) return;
-        if (second == null) return;
-        if(first.getType() != second.getType() && second.getType() != Material.ENCHANTED_BOOK) return;
+        if (first == null) first = new ItemStack(Material.AIR);
+        if (second == null) second = new ItemStack(Material.AIR);
+        if(first.getType() != second.getType() || second.getType() != Material.ENCHANTED_BOOK) return;
 
         int fL = CustomEnchantment.getEnchantLevel(first, WR), sL = CustomEnchantment.getEnchantLevel(second, WR);
         if(fL >= 1 && second.getItemMeta().hasEnchant(Enchantment.UNBREAKING)) return;
