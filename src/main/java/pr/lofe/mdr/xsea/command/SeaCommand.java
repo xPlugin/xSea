@@ -7,10 +7,12 @@ import dev.jorel.commandapi.arguments.TextArgument;
 import dev.jorel.commandapi.executors.CommandArguments;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
+import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import pr.lofe.lib.xbase.text.TextWrapper;
+import pr.lofe.mdr.xsea.display.CamPath;
 import pr.lofe.mdr.xsea.enchant.CustomEnchantment;
 import pr.lofe.mdr.xsea.xSea;
 
@@ -18,6 +20,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 
 import static org.bukkit.Material.AIR;
 
@@ -92,6 +95,41 @@ public class SeaCommand extends Command {
                     }
                 }.src.withArguments(new PlayerArgument("player")).withOptionalArguments(new IntegerArgument("level", 1)),
 
+                new EmptyCommand("animation")
+                        .src.withSubcommands(
+                                new Command("setup") {
+                                    @Override
+                                    void execute(CommandSender sender, CommandArguments args) {
+                                        if(sender instanceof Player player) {
+                                            String pos = args.getRaw("position");
+                                            assert pos != null;
+                                            if(pos.equals("first")) AnimationHolder.first = player.getLocation();
+                                            else if(pos.equals("second")) AnimationHolder.second = player.getLocation();
+                                            player.sendMessage(TextWrapper.text("Установлена " + pos + " точка для проигрывания анимации."));
+                                        }
+                                    }
+                                }.src.withArguments(new TextArgument("position").replaceSuggestions(ArgumentSuggestions.strings("first", "second"))),
+
+                                new Command("playback") {
+                                    @Override
+                                    void execute(CommandSender sender, CommandArguments args) {
+                                        if(sender instanceof Player player) {
+                                            int time = (int) args.get("seconds");
+
+                                            Location first = AnimationHolder.first, second = AnimationHolder.second;
+                                            if(first == null || second == null) {
+                                                player.sendMessage(TextWrapper.text("Одна из позиций не установлена."));
+                                                return;
+                                            }
+
+                                            CamPath path = new CamPath(new ArrayList<>(){{add(player.getUniqueId());}}, first, second, time);
+                                            path.generatePath();
+                                            path.runPath();
+                                        }
+                                    }
+                                }.src.withArguments(new IntegerArgument("seconds"))
+                        ),
+
                 new Command("test") {
                     @Override
                     void execute(CommandSender sender, CommandArguments args) {
@@ -135,5 +173,10 @@ public class SeaCommand extends Command {
     }
 
     @Override protected void execute(CommandSender commandSender, CommandArguments commandArguments) {}
+
+    public static class AnimationHolder {
+        public static Location first, second;
+        public static Player sender;
+    }
 
 }
