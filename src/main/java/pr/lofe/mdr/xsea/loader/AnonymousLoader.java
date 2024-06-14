@@ -60,9 +60,10 @@ public class AnonymousLoader {
         }};
 
         new ShapedRecipe(NamespacedKey.minecraft("flippers_recipe"), items.getItem("flippers")){{
-            shape("_A_", "AAA", "ABA");
-            setIngredient('A', Material.DRIED_KELP);
-            setIngredient('B', Material.STRING);
+            shape("___", "ABA", "ACA");
+            setIngredient('A', Material.KELP);
+            setIngredient('B', Material.LEATHER_BOOTS);
+            setIngredient('C', Material.SLIME_BALL);
             Bukkit.addRecipe(this);
         }};
     }
