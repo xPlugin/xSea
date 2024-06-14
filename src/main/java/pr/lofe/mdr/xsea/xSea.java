@@ -30,7 +30,8 @@ public class xSea extends JavaPlugin {
         I = this;
         reloadData();
 
-        AnonymousLoader.a();
+        try { AnonymousLoader.load(); }
+        catch (Exception e) { e.printStackTrace(); }
 
         SimpleDateFormat now = new SimpleDateFormat("dd.MM HH:mm:ss");
 

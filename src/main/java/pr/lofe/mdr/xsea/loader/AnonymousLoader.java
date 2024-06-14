@@ -17,7 +17,7 @@ import static pr.lofe.mdr.xsea.xSea.WATER_RESISTANCE;
 
 public class AnonymousLoader {
 
-    public static void a() {
+    public static void load() {
         ItemRegistry items = xSea.getItems();
         RecipesProvider recipes = xSea.getRecipes();
 
