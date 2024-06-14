@@ -59,7 +59,7 @@ public class EnchantmentHandler implements Listener {
         ItemStack first = inv.getFirstItem(), second = inv.getSecondItem();
         if (first == null) first = new ItemStack(Material.AIR);
         if (second == null) second = new ItemStack(Material.AIR);
-        if(first.getType() != second.getType() || second.getType() != Material.ENCHANTED_BOOK) return;
+        if(first.getType() != second.getType() && second.getType() != Material.ENCHANTED_BOOK) return;
 
         int fL = CustomEnchantment.getEnchantLevel(first, WR), sL = CustomEnchantment.getEnchantLevel(second, WR);
         if(fL >= 1 && second.getItemMeta().hasEnchant(Enchantment.UNBREAKING)) return;
@@ -75,6 +75,7 @@ public class EnchantmentHandler implements Listener {
             if(item == null) item = first.clone();
             WR.enchant(item, newLevel, CustomEnchantment.GlintMethod.GlintOverride);
             event.setResult(item);
+            inv.setRepairCost(WR.getAnvilCost());
         }
     }
 

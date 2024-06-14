@@ -128,6 +128,7 @@ public abstract class CustomEnchantment<IEvent extends Event> implements Listene
 
     public static boolean hasEnchant(ItemStack item, CustomEnchantment enchant) {
         ItemMeta meta = item.getItemMeta();
+        if(meta == null) return false;
         PersistentDataContainer data = meta.getPersistentDataContainer();
         if(!data.has(ENCH)) return false;
         String rawName = data.get(ENCH, PersistentDataType.STRING);
@@ -139,8 +140,9 @@ public abstract class CustomEnchantment<IEvent extends Event> implements Listene
         if(!hasEnchant(item, enchant)) return -1;
 
         ItemMeta meta = item.getItemMeta();
-        PersistentDataContainer data = meta.getPersistentDataContainer();
+        if(meta == null) return -1;
 
+        PersistentDataContainer data = meta.getPersistentDataContainer();
         NamespacedKey key = enchant.key;
         if(key == null) return -1;
 
