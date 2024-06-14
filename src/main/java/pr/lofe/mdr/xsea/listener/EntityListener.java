@@ -93,7 +93,7 @@ public class EntityListener implements Listener {
 
             if(inWater && currentAmount >= 0) currentAmount--;
             else if(currentAmount < balloonCapacity) currentAmount += 3;
-            airTick.put(player, currentAmount + 1);
+            airTick.put(player, currentAmount);
 
             player.setRemainingAir(bubbles);
         }
