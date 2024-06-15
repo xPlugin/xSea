@@ -12,6 +12,7 @@ import pr.lofe.mdr.xsea.inv.InventoryListener;
 import pr.lofe.mdr.xsea.item.ItemRegistry;
 import pr.lofe.mdr.xsea.listener.*;
 import pr.lofe.mdr.xsea.loader.AnonymousLoader;
+import pr.lofe.mdr.xsea.loader.ChangesDetect;
 import pr.lofe.mdr.xsea.registry.RecipesProvider;
 
 import java.text.SimpleDateFormat;
@@ -67,6 +68,8 @@ public class xSea extends JavaPlugin {
         CommandAPI.unregister("sea");
         Bukkit.removeRecipe(NamespacedKey.minecraft("carpenter_table"));
         Bukkit.removeRecipe(NamespacedKey.minecraft("flippers_recipe"));
+
+        // ChangesDetect.onDisable();
     }
 
     public static RecipesProvider getRecipes() {
