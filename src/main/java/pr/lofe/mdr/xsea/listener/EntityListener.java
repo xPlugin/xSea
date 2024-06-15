@@ -6,6 +6,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.block.Block;
+import org.bukkit.block.data.Waterlogged;
 import org.bukkit.damage.DamageSource;
 import org.bukkit.damage.DamageType;
 import org.bukkit.entity.Player;
@@ -59,7 +60,13 @@ public class EntityListener implements Listener {
     @EventHandler public void tick(ServerTickEndEvent event) {
         for(Player player: Bukkit.getOnlinePlayers()) {
 
-            boolean inWater = player.getEyeLocation().getBlock().getType() == Material.WATER && !player.isInBubbleColumn();
+            boolean inWater = false;
+
+            if(!player.isInBubbleColumn()) {
+                Block block = player.getEyeLocation().getBlock();
+                if(block.getType() == Material.WATER) inWater = true;
+                else if (block.getBlockData() instanceof Waterlogged waterlogged) inWater = waterlogged.isWaterlogged();
+            }
 
             if(inWater) {
                 ItemStack item = player.getInventory().getBoots(); // getBoobs
