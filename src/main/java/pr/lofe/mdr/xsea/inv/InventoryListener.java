@@ -2,6 +2,7 @@ package pr.lofe.mdr.xsea.inv;
 
 import io.th0rgal.oraxen.api.OraxenBlocks;
 import io.th0rgal.oraxen.mechanics.Mechanic;
+import net.minecraft.util.RandomSource;
 import org.bukkit.Bukkit;
 import org.bukkit.SoundCategory;
 import org.bukkit.block.Block;
@@ -16,6 +17,8 @@ import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import pr.lofe.mdr.xsea.entity.PlayerDifficulty;
+import pr.lofe.mdr.xsea.util.RandomUtil;
 import pr.lofe.mdr.xsea.xSea;
 
 public class InventoryListener implements Listener {
@@ -45,12 +48,17 @@ public class InventoryListener implements Listener {
                     case 15 -> {
                         if(slot == null) event.setCancelled(true);
                         else {
+                            Player player = (Player) event.getWhoClicked();
                             for(int i: new int[]{1, 2, 10, 11, 12, 20}) {
                                 ItemStack item = inv.getItem(i);
-                                if(item != null) item.setAmount(item.getAmount() - 1);
-                                Player player = (Player) event.getWhoClicked();
-                                player.getWorld().playSound(player, "custom.sfx.carpenter_table_work", SoundCategory.BLOCKS, .5f,1f);
+                                int decreaseAmount = 1;
+                                if(PlayerDifficulty.getDifficulty(player) == PlayerDifficulty.HARD) {
+                                    if(RandomUtil.nextBool(50)) decreaseAmount = 2;
+                                    else if (RandomUtil.nextBool(25)) decreaseAmount = 3;
+                                }
+                                if(item != null) item.setAmount(item.getAmount() - decreaseAmount);
                             }
+                            player.getWorld().playSound(player, "custom.sfx.carpenter_table_work", SoundCategory.BLOCKS, .5f,1f);
                         }
                     }
                     default -> event.setCancelled(true);

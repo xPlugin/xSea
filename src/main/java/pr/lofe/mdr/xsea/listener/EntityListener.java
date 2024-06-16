@@ -27,6 +27,7 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import pr.lofe.lib.xbase.text.TextWrapper;
 import pr.lofe.mdr.xsea.entity.PlayerDifficulty;
+import pr.lofe.mdr.xsea.util.RandomUtil;
 import pr.lofe.mdr.xsea.xSea;
 
 import java.time.Duration;
@@ -35,17 +36,12 @@ import java.util.HashMap;
 public class EntityListener implements Listener {
 
     private final HashMap<Player, Integer> airTick = new HashMap<>();
-    private final RandomSource random = RandomSource.create();
-
-    public EntityListener() {
-        random.setSeed(624549675007745075L);
-    }
 
     @EventHandler public void onPlayerDamage(EntityDamageEvent event) {
         if(event.getEntity() instanceof Player player) {
             PlayerDifficulty diff = PlayerDifficulty.getDifficulty(player);
             if(event.getCause() == EntityDamageEvent.DamageCause.DROWNING) {
-                if(diff == PlayerDifficulty.EASY && random.nextInt(0, 9) == 0) event.setCancelled(true);
+                if(diff == PlayerDifficulty.EASY && RandomUtil.nextBool(10)) event.setCancelled(true);
             }
             else if (diff == PlayerDifficulty.HARD) event.setDamage(event.getDamage() * 1.15);
         }
@@ -55,7 +51,7 @@ public class EntityListener implements Listener {
         if(event.getEntity() instanceof Player player) {
             PlayerDifficulty diff = PlayerDifficulty.getDifficulty(player);
             if(diff == PlayerDifficulty.EASY) {
-                if (event.getFoodLevel() > player.getFoodLevel() && random.nextInt(9) < 5) event.setFoodLevel(Math.min(event.getFoodLevel() + 1, 20));
+                if (event.getFoodLevel() > player.getFoodLevel() && RandomUtil.nextBool(60)) event.setFoodLevel(Math.min(event.getFoodLevel() + 1, 20));
             }
             else {
                 // TODO
@@ -64,7 +60,7 @@ public class EntityListener implements Listener {
     }
 
     @EventHandler public void onPlayerExpChange(PlayerExpChangeEvent event) {
-
+        if(PlayerDifficulty.getDifficulty(event.getPlayer()) == PlayerDifficulty.EASY) event.setAmount((int) (event.getAmount() * 0.9));
     }
 
     @EventHandler public void onPlayerInteract(PlayerInteractEvent event) {
