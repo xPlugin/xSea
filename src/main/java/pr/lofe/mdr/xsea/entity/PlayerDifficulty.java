@@ -16,6 +16,7 @@ public enum PlayerDifficulty {
 
     public static void setDifficulty(Player player, PlayerDifficulty difficulty) {
         data.getConfig().set(player.getName() + ".difficulty", difficulty);
+        data.save();
     }
 
 }
