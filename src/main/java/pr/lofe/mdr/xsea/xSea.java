@@ -14,6 +14,7 @@ import pr.lofe.mdr.xsea.listener.*;
 import pr.lofe.mdr.xsea.loader.AnonymousLoader;
 import pr.lofe.mdr.xsea.loader.ChangesDetect;
 import pr.lofe.mdr.xsea.registry.RecipesProvider;
+import pr.lofe.mdr.xsea.start.StartEngine;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -51,6 +52,7 @@ public class xSea extends JavaPlugin {
         Bukkit.getPluginManager().registerEvents(new BlockListener(), this);
         Bukkit.getPluginManager().registerEvents(new EnchantmentHandler(), this);
         Bukkit.getPluginManager().registerEvents(entityListener, this);
+        Bukkit.getPluginManager().registerEvents(new StartEngine(), this);
 
         Bukkit.broadcast(TextWrapper.text("<blue>[xSea]</blue> [enabled]<br>Debug mode <u><green>enabled</green></u>, saving StackTrace`s to log file."));
     }

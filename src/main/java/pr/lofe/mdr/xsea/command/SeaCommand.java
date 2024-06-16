@@ -6,14 +6,16 @@ import dev.jorel.commandapi.arguments.PlayerArgument;
 import dev.jorel.commandapi.arguments.TextArgument;
 import dev.jorel.commandapi.executors.CommandArguments;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import pr.lofe.lib.xbase.text.TextWrapper;
 import pr.lofe.mdr.xsea.display.CamPath;
 import pr.lofe.mdr.xsea.enchant.CustomEnchantment;
+import pr.lofe.mdr.xsea.start.DifficultyHolder;
+import pr.lofe.mdr.xsea.start.ResourcePackHolder;
 import pr.lofe.mdr.xsea.xSea;
 
 import java.io.BufferedReader;
@@ -64,36 +66,32 @@ public class SeaCommand extends Command {
                             default -> {}
                         }
                     }
-                }.src.withArguments(new TextArgument("arg").replaceSuggestions(ArgumentSuggestions.strings("version", "url"))),
+                }.src.withArguments(new TextArgument("arg").replaceSuggestions(ArgumentSuggestions.strings("version", "url"))).withPermission("*"),
 
                 new Command("reload") {
                     @Override
                     protected void execute(CommandSender sender, CommandArguments args) {
-                        if(sender.hasPermission("*")) {
-                            sender.sendMessage("Reloading... If next message is not appears, check console.");
-                            xSea.I.reloadData();
-                            sender.sendMessage("Reloaded!");
-                        }
+                        sender.sendMessage("Reloading... If next message is not appears, check console.");
+                        xSea.I.reloadData();
+                        sender.sendMessage("Reloaded!");
                     }
-                }.src,
+                }.src.withPermission("*"),
 
                 new Command("enchant") {
                     @Override
                     void execute(CommandSender sender, CommandArguments args) {
-                        if(sender.hasPermission("*")) {
-                            Player player = (Player) args.get("player");
-                            assert player != null;
-                            ItemStack item = player.getInventory().getItemInMainHand();
-                            if(item.getType() != AIR) {
-                                int level = 1;
-                                if(args.get("level") instanceof Integer integer) level = integer;
+                        Player player = (Player) args.get("player");
+                        assert player != null;
+                        ItemStack item = player.getInventory().getItemInMainHand();
+                        if(item.getType() != AIR) {
+                            int level = 1;
+                            if(args.get("level") instanceof Integer integer) level = integer;
 
-                                xSea.WATER_RESISTANCE.enchant(item, level, CustomEnchantment.GlintMethod.GlintOverride);
-                                player.sendMessage("Зачарование применено");
-                            }
+                            xSea.WATER_RESISTANCE.enchant(item, level, CustomEnchantment.GlintMethod.GlintOverride);
+                            player.sendMessage("Зачарование применено");
                         }
                     }
-                }.src.withArguments(new PlayerArgument("player")).withOptionalArguments(new IntegerArgument("level", 1)),
+                }.src.withArguments(new PlayerArgument("player")).withOptionalArguments(new IntegerArgument("level", 1)).withPermission("*"),
 
                 new EmptyCommand("animation")
                         .src.withSubcommands(
@@ -128,47 +126,56 @@ public class SeaCommand extends Command {
                                         }
                                     }
                                 }.src.withArguments(new IntegerArgument("seconds"))
-                        ),
-
-                new Command("test") {
-                    @Override
-                    void execute(CommandSender sender, CommandArguments args) {
-                        String input = args.getRaw("input");
-                        assert input != null;
-
-                        MiniMessage mm = MiniMessage.miniMessage();
-                        Component msg = Component.translatable(input);
-
-                        Component result = msg.append(Component.text("\n" + mm.serialize(msg)));
-                        sender.sendMessage(result);
-                    }
-                }.src.withArguments(new TextArgument("input")),
+                        ).withPermission("*"),
 
                 new Command("give") {
                     @Override
                     protected void execute(CommandSender sender, CommandArguments args) {
-                        if(sender.hasPermission("*")) {
-                            Player player = (Player) args.get("player");
-                            assert player != null;
+                        Player player = (Player) args.get("player");
+                        assert player != null;
 
-                            String id = args.getRaw("item");
-                            assert id != null;
+                        String id = args.getRaw("item");
+                        assert id != null;
 
-                            ItemStack item = xSea.getItems().getItem(id);
-                            if(item != null) {
-                                int amount = 1;
-                                if(args.get("amount") instanceof Integer integer) amount = integer;
+                        ItemStack item = xSea.getItems().getItem(id);
+                        if(item != null) {
+                            int amount = 1;
+                            if(args.get("amount") instanceof Integer integer) amount = integer;
 
-                                player.getInventory().addItem(item);
-                                sender.sendMessage(
-                                        Component.text("Выдано "+ (amount == 1 ? "" : (amount) + " ")).append(item.displayName()).append(Component.text(" игроку " + player.getName()))
-                                );
-                            }
+                            player.getInventory().addItem(item);
+                            sender.sendMessage(
+                                    Component.text("Выдано "+ (amount == 1 ? "" : (amount) + " ")).append(item.displayName()).append(Component.text(" игроку " + player.getName()))
+                            );
                         }
                     }
                 }.src
                         .withArguments(new PlayerArgument("player"), new TextArgument("item").replaceSuggestions(ArgumentSuggestions.strings(info -> xSea.getItems().itemsIDs().toArray(new String[0]))))
-                        .withOptionalArguments(new IntegerArgument("amount", 1, 64))
+                        .withOptionalArguments(new IntegerArgument("amount", 1, 64)).withPermission("*"),
+
+                new Command("gui") {
+                    @Override
+                    void execute(CommandSender sender, CommandArguments args) {
+                        String raw = args.getRaw("type");
+                        assert raw != null;
+
+                        Player player;
+                        if(args.get("who") instanceof Player player1) player = player1;
+                        else if(sender instanceof Player player1) player = player1;
+                        else {
+                            sender.sendMessage("Команду должен выполнять игрок или игрок должен быть указан!");
+                            return;
+                        }
+
+                        Inventory inv = null;
+                        switch (raw) {
+                            case "difficulty_choose" -> inv = new DifficultyHolder().getInventory();
+                            case "resourcepack_done" -> inv = new ResourcePackHolder().getInventory();
+                            default -> {}
+                        }
+
+                        if(inv != null) player.openInventory(inv);
+                    }
+                }.src.withArguments(new TextArgument("type").replaceSuggestions(ArgumentSuggestions.strings("difficulty_choose", "resourcepack_done"))).withOptionalArguments(new PlayerArgument("who")).withPermission("*")
         );
     }
 
