@@ -3,6 +3,7 @@ package pr.lofe.mdr.xsea.loader;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
+import org.bukkit.inventory.FurnaceRecipe;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.ShapedRecipe;
 import pr.lofe.mdr.xsea.enchant.WaterResistance;
@@ -64,6 +65,26 @@ public class AnonymousLoader {
             setIngredient('A', Material.KELP);
             setIngredient('B', Material.LEATHER_BOOTS);
             setIngredient('C', Material.SLIME_BALL);
+            Bukkit.addRecipe(this);
+        }};
+
+        new ShapedRecipe(NamespacedKey.minecraft("oxygen_tank_light_recipe"), items.getItem("oxygen_tank_light")){{
+           shape("_A_", "BCB", "_B_");
+           setIngredient('A', Material.NETHERITE_SCRAP);
+           setIngredient('B', items.getItem("titanium_ingot"));
+           setIngredient('C', Material.YELLOW_DYE);
+           Bukkit.addRecipe(this);
+        }};
+
+        new ShapedRecipe(NamespacedKey.minecraft("oxygen_tank_recipe"), items.getItem("oxygen_tank")){{
+            shape("_A_", "BCB", "___");
+            setIngredient('A', Material.NETHERITE_SCRAP);
+            setIngredient('B', items.getItem("oxygen_tank_light"));
+            setIngredient('C', items.getItem("titanium_ingot"));
+            Bukkit.addRecipe(this);
+        }};
+
+        new FurnaceRecipe(NamespacedKey.minecraft("titanium_ingot_recipe"), items.getItem("titanium_ingot"), items.getItem("raw_titanium").getType(), 5, 300){{
             Bukkit.addRecipe(this);
         }};
     }

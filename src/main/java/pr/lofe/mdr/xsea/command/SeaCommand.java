@@ -14,6 +14,7 @@ import org.bukkit.inventory.ItemStack;
 import pr.lofe.lib.xbase.text.TextWrapper;
 import pr.lofe.mdr.xsea.display.CamPath;
 import pr.lofe.mdr.xsea.enchant.CustomEnchantment;
+import pr.lofe.mdr.xsea.entity.PlayerDifficulty;
 import pr.lofe.mdr.xsea.start.DifficultyHolder;
 import pr.lofe.mdr.xsea.start.ResourcePackHolder;
 import pr.lofe.mdr.xsea.xSea;
@@ -141,6 +142,7 @@ public class SeaCommand extends Command {
                         if(item != null) {
                             int amount = 1;
                             if(args.get("amount") instanceof Integer integer) amount = integer;
+                            item.setAmount(amount);
 
                             player.getInventory().addItem(item);
                             sender.sendMessage(
@@ -151,6 +153,33 @@ public class SeaCommand extends Command {
                 }.src
                         .withArguments(new PlayerArgument("player"), new TextArgument("item").replaceSuggestions(ArgumentSuggestions.strings(info -> xSea.getItems().itemsIDs().toArray(new String[0]))))
                         .withOptionalArguments(new IntegerArgument("amount", 1, 64)).withPermission("*"),
+
+                new Command("difficulty") {
+                    @Override
+                    void execute(CommandSender sender, CommandArguments args) {
+                        Player player = (Player) args.get("player");
+                        String action = args.getRaw("get-or-set");
+                        assert action != null && player != null;
+
+                        if(action.equals("get")) {
+                            PlayerDifficulty diff = PlayerDifficulty.getDifficulty(player);
+                            sender.sendMessage(TextWrapper.text("Сложность у игрока " + player.getName() + " установлена на " + diff.name()));
+                        }
+                        else if (action.equals("set")) {
+                            String newDiff = args.getRaw("new-difficulty");
+                            if(newDiff == null) {
+                                sender.sendMessage("Укажите новую сложность!");
+                                return;
+                            }
+                            PlayerDifficulty diff = PlayerDifficulty.valueOf(newDiff);
+                            PlayerDifficulty.setDifficulty(player, diff);
+                            sender.sendMessage(TextWrapper.text("Сложность у игрока " + player.getName() + " теперь равна " + diff.name()));
+                        }
+                    }
+                }.src
+                        .withArguments(new PlayerArgument("player"), new TextArgument("get-or-set").replaceSuggestions(ArgumentSuggestions.strings("get", "set")))
+                        .withOptionalArguments(new TextArgument("new-difficulty").replaceSuggestions(ArgumentSuggestions.strings("EASY", "HARD")))
+                        .withPermission("*"),
 
                 new Command("gui") {
                     @Override

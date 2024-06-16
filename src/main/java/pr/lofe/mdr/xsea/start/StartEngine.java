@@ -23,7 +23,7 @@ import java.util.HashSet;
 
 public class StartEngine implements Listener {
 
-    private final Config data = new Config("data", false, false);
+    public static final Config data = new Config("data", false, false);
     private final HashSet<Player> inStart = new HashSet<>();
     private final HashMap<Player, GameMode> locked = new HashMap<>();
 
@@ -71,6 +71,7 @@ public class StartEngine implements Listener {
                 if(title.contains("ꓑ")) diff = PlayerDifficulty.EASY;
                 else if (title.contains("ꓐ")) diff = PlayerDifficulty.HARD;
                 assert diff != null;
+                player.sendMessage(diff.name());
                 PlayerDifficulty.setDifficulty(player, diff);
 
                 unlock(player);
