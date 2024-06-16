@@ -8,7 +8,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.ShapedRecipe;
 import pr.lofe.mdr.xsea.enchant.WaterResistance;
 import pr.lofe.mdr.xsea.inv.CarpenterRecipe;
-import pr.lofe.mdr.xsea.item.ItemRegistry;
+import pr.lofe.mdr.xsea.registry.ItemRegistry;
 import pr.lofe.mdr.xsea.registry.RecipesProvider;
 import pr.lofe.mdr.xsea.xSea;
 

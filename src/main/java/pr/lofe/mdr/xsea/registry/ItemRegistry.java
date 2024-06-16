@@ -1,4 +1,4 @@
-package pr.lofe.mdr.xsea.item;
+package pr.lofe.mdr.xsea.registry;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextDecoration;

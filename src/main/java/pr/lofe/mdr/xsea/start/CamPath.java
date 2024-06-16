@@ -1,4 +1,4 @@
-package pr.lofe.mdr.xsea.display;
+package pr.lofe.mdr.xsea.start;
 
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;

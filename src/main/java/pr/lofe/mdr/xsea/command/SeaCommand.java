@@ -12,7 +12,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import pr.lofe.lib.xbase.text.TextWrapper;
-import pr.lofe.mdr.xsea.display.CamPath;
+import pr.lofe.mdr.xsea.start.CamPath;
 import pr.lofe.mdr.xsea.enchant.CustomEnchantment;
 import pr.lofe.mdr.xsea.entity.PlayerDifficulty;
 import pr.lofe.mdr.xsea.start.DifficultyHolder;

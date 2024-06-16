@@ -9,10 +9,9 @@ import pr.lofe.mdr.xsea.command.SeaCommand;
 import pr.lofe.mdr.xsea.enchant.EnchantmentHandler;
 import pr.lofe.mdr.xsea.enchant.WaterResistance;
 import pr.lofe.mdr.xsea.inv.InventoryListener;
-import pr.lofe.mdr.xsea.item.ItemRegistry;
+import pr.lofe.mdr.xsea.registry.ItemRegistry;
 import pr.lofe.mdr.xsea.listener.*;
 import pr.lofe.mdr.xsea.loader.AnonymousLoader;
-import pr.lofe.mdr.xsea.loader.ChangesDetect;
 import pr.lofe.mdr.xsea.registry.RecipesProvider;
 import pr.lofe.mdr.xsea.start.StartEngine;
 
