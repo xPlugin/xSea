@@ -3,6 +3,7 @@ package pr.lofe.mdr.xsea;
 import dev.jorel.commandapi.CommandAPI;
 import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
+import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 import pr.lofe.lib.xbase.text.TextWrapper;
 import pr.lofe.mdr.xsea.command.SeaCommand;
@@ -46,14 +47,19 @@ public class xSea extends JavaPlugin {
         }, 200L, 20L);
 
         new SeaCommand().register();
-        Bukkit.getPluginManager().registerEvents(new InventoryListener(), this);
-        Bukkit.getPluginManager().registerEvents(itemListener, this);
-        Bukkit.getPluginManager().registerEvents(new BlockListener(), this);
-        Bukkit.getPluginManager().registerEvents(new EnchantmentHandler(), this);
-        Bukkit.getPluginManager().registerEvents(entityListener, this);
-        Bukkit.getPluginManager().registerEvents(new StartEngine(), this);
+
+        register(new InventoryListener());
+        register(itemListener);
+        register(new BlockListener());
+        register(new EnchantmentHandler());
+        register(entityListener);
+        register(new StartEngine());
 
         Bukkit.broadcast(TextWrapper.text("<blue>[xSea]</blue> [enabled]<br>Debug mode <u><green>enabled</green></u>, saving StackTrace`s to log file."));
+    }
+
+    private void register(Listener listener) {
+        Bukkit.getPluginManager().registerEvents(listener, this);
     }
 
     public void reloadData() {

@@ -2,7 +2,6 @@ package pr.lofe.mdr.xsea.entity;
 
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
-import pr.lofe.mdr.xsea.config.Config;
 import pr.lofe.mdr.xsea.start.StartEngine;
 
 public enum PlayerDifficulty {

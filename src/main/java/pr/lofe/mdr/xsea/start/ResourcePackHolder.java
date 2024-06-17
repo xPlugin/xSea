@@ -21,12 +21,9 @@ public class ResourcePackHolder extends StartHolder {
 
     @Override
     public @NotNull Inventory getInventory() {
-        Inventory inv = Bukkit.createInventory(this, 36, "§fꐮꓓ");
+        Inventory inv = Bukkit.createInventory(this, 36, TextWrapper.text("<white>fꐮꓓ"));
         for (int i = 0; i < 36; i++) {
-            switch (i) {
-                case 19, 20, 21, 23, 24, 25 -> inv.setItem(i, empty);
-                default -> {}
-            }
+            if(i >= 19 && i <= 25) inv.setItem(i, empty);
         }
         return inv;
     }

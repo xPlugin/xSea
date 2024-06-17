@@ -21,9 +21,13 @@ public class ItemListener implements Listener {
 
     @EventHandler public void onFurnaceSmelt(FurnaceBurnEvent event) {
         Furnace furnace = (Furnace) event.getBlock().getState();
-        String id = xSea.getItems().getKey(furnace.getInventory().getSmelting());
-        if(furnace.getInventory().getSmelting().getType() == Material.COOKED_PORKCHOP && (id == null || !id.equals("raw_titanium"))) {
-            event.setCancelled(true);
+        ItemStack smelting = furnace.getInventory().getSmelting();
+
+        if(smelting != null) {
+            String id = xSea.getItems().getKey(smelting);
+            if(smelting.getType() == Material.COOKED_PORKCHOP && (id == null || !id.equals("raw_titanium"))) {
+                event.setCancelled(true);
+            }
         }
     }
 

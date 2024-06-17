@@ -1,12 +1,12 @@
 package pr.lofe.mdr.xsea.command;
 
+import com.google.common.collect.Lists;
 import dev.jorel.commandapi.arguments.ArgumentSuggestions;
 import dev.jorel.commandapi.arguments.IntegerArgument;
 import dev.jorel.commandapi.arguments.PlayerArgument;
 import dev.jorel.commandapi.arguments.TextArgument;
 import dev.jorel.commandapi.executors.CommandArguments;
 import net.kyori.adventure.text.Component;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -26,7 +26,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
 
 import static org.bukkit.Material.AIR;
 
@@ -78,15 +77,13 @@ public class SeaCommand extends Command {
                                     sender.sendMessage(TextWrapper.text("Невозможно получить версию. Плагин забилжен на коленках у араба."));
                                 }
                             }
-                            case "url" -> {
-                                sender.sendMessage(TextWrapper.text(
-                                        "Repository URL: <blue><click:open_url:'https://github.com/justlofe/xGartic/'>[GitHub]</click></blue>"
-                                ));
-                            }
+                            case "url" -> sender.sendMessage(TextWrapper.text(
+                                    "Repository URL: <blue><click:open_url:'https://github.com/justlofe/xSea/'>[GitHub]</click></blue>"
+                            ));
                             default -> {}
                         }
                     }
-                }.src.withArguments(new TextArgument("arg").replaceSuggestions(ArgumentSuggestions.strings("version", "url"))).withPermission("*"),
+                }.src.withArguments(new TextArgument("arg").replaceSuggestions(ArgumentSuggestions.strings("version", "url"))),
 
                 new Command("reload") {
                     @Override
@@ -111,7 +108,7 @@ public class SeaCommand extends Command {
                             player.sendMessage("Зачарование применено");
                         }
                     }
-                }.src.withArguments(new PlayerArgument("player")).withOptionalArguments(new IntegerArgument("level", 1)).withPermission("*"),
+                }.src.withArguments(new PlayerArgument("player")).withOptionalArguments(new IntegerArgument("level", 1)),
 
                 new EmptyCommand("animation")
                         .src.withSubcommands(
@@ -132,7 +129,9 @@ public class SeaCommand extends Command {
                                     @Override
                                     void execute(CommandSender sender, CommandArguments args) {
                                         if(sender instanceof Player player) {
-                                            int time = (int) args.get("seconds");
+                                            Object rawS = args.get("seconds");
+                                            assert rawS != null;
+                                            int time = (int) rawS;
 
                                             Location first = AnimationHolder.first, second = AnimationHolder.second;
                                             if(first == null || second == null) {
@@ -140,13 +139,12 @@ public class SeaCommand extends Command {
                                                 return;
                                             }
 
-                                            CamPath path = new CamPath(new ArrayList<>(){{add(player.getUniqueId());}}, first, second, time);
+                                            CamPath path = new CamPath(Lists.newArrayList(player), first, second, time);
                                             path.generatePath();
                                             path.runPath();
                                         }
                                     }
-                                }.src.withArguments(new IntegerArgument("seconds"))
-                        ).withPermission("*"),
+                                }.src.withArguments(new IntegerArgument("seconds"))),
 
                 new Command("give") {
                     @Override
@@ -171,7 +169,7 @@ public class SeaCommand extends Command {
                     }
                 }.src
                         .withArguments(new PlayerArgument("player"), new TextArgument("item").replaceSuggestions(ArgumentSuggestions.strings(info -> xSea.getItems().itemsIDs().toArray(new String[0]))))
-                        .withOptionalArguments(new IntegerArgument("amount", 1, 64)).withPermission("*"),
+                        .withOptionalArguments(new IntegerArgument("amount", 1, 64)),
 
                 new Command("difficulty") {
                     @Override
@@ -197,8 +195,7 @@ public class SeaCommand extends Command {
                     }
                 }.src
                         .withArguments(new PlayerArgument("player"), new TextArgument("get-or-set").replaceSuggestions(ArgumentSuggestions.strings("get", "set")))
-                        .withOptionalArguments(new TextArgument("new-difficulty").replaceSuggestions(ArgumentSuggestions.strings("EASY", "HARD")))
-                        .withPermission("*"),
+                        .withOptionalArguments(new TextArgument("new-difficulty").replaceSuggestions(ArgumentSuggestions.strings("EASY", "HARD"))),
 
                 new Command("gui") {
                     @Override
@@ -223,15 +220,14 @@ public class SeaCommand extends Command {
 
                         if(inv != null) player.openInventory(inv);
                     }
-                }.src.withArguments(new TextArgument("type").replaceSuggestions(ArgumentSuggestions.strings("difficulty_choose", "resourcepack_done"))).withOptionalArguments(new PlayerArgument("who")).withPermission("*")
-        );
+                }.src.withArguments(new TextArgument("type").replaceSuggestions(ArgumentSuggestions.strings("difficulty_choose", "resourcepack_done"))).withOptionalArguments(new PlayerArgument("who"))
+        ).withPermission("*");
     }
 
     @Override protected void execute(CommandSender commandSender, CommandArguments commandArguments) {}
 
     public static class AnimationHolder {
         public static Location first, second;
-        public static Player sender;
     }
 
 }

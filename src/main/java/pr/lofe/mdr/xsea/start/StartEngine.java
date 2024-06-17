@@ -70,7 +70,6 @@ public class StartEngine implements Listener {
                 if(title.contains("ꓑ")) diff = PlayerDifficulty.EASY;
                 else if (title.contains("ꓐ")) diff = PlayerDifficulty.HARD;
                 assert diff != null;
-                player.sendMessage(diff.name());
                 PlayerDifficulty.setDifficulty(player, diff);
 
                 unlock(player);
@@ -80,7 +79,7 @@ public class StartEngine implements Listener {
 
                 Location start = new Location(world, 0.5, 110.75, -1, 0, -70);
                 Location end = new Location(world, .5, 113, .5, 0, 0);
-                CamPath path = new CamPath(Lists.newArrayList(player.getUniqueId()), start, end, 5);
+                CamPath path = new CamPath(Lists.newArrayList(player), start, end, 5);
                 player.teleport(end);
                 path.generatePath();
 

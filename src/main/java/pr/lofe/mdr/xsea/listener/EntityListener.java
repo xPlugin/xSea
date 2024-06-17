@@ -1,10 +1,6 @@
 package pr.lofe.mdr.xsea.listener;
 
 import com.destroystokyo.paper.event.server.ServerTickEndEvent;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.title.Title;
-import net.minecraft.util.RandomSource;
-import net.minecraft.world.inventory.EnchantmentMenu;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -17,24 +13,18 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.EntityDamageEvent;
-import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.FoodLevelChangeEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerExpChangeEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.event.player.PlayerItemConsumeEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
-import pr.lofe.lib.xbase.text.TextWrapper;
 import pr.lofe.mdr.xsea.entity.PlayerDifficulty;
 import pr.lofe.mdr.xsea.util.RandomUtil;
 import pr.lofe.mdr.xsea.xSea;
 
-import java.time.Duration;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
 
 public class EntityListener implements Listener {
 
@@ -78,6 +68,7 @@ public class EntityListener implements Listener {
         if(PlayerDifficulty.getDifficulty(event.getPlayer()) == PlayerDifficulty.EASY) event.setAmount((int) (event.getAmount() * 0.9));
     }
 
+    @SuppressWarnings("deprecation")
     @EventHandler public void onPlayerInteract(PlayerInteractEvent event) {
         Player player = event.getPlayer();
 
