@@ -1,5 +1,5 @@
 carpenter_table:
-  type: paper
+  type: POPPED_CHORUS_FRUIT
   cmd: 1111
   oraxen: carpenter_table
   flags:
@@ -8,8 +8,9 @@ carpenter_table:
     name: Стол плотника
     lore:
       - '<blue>Modoru: Межсезонье</blue>'
+
 oak_plank:
-  type: paper
+  type: POPPED_CHORUS_FRUIT
   cmd: 1112
   flags:
     - hide_attributes
@@ -17,8 +18,29 @@ oak_plank:
     name: Дубовая доска
     lore:
       - '<blue>Modoru: Межсезонье</blue>'
+
+titanium_ingot:
+  type: POPPED_CHORUS_FRUIT
+  cmd: 1114
+  flags:
+    - hide_attributes
+  display:
+    name: Слиток титана
+    lore:
+      - '<blue>Modoru: Межсезонье</blue>'
+
+raw_titanium:
+  type: POPPED_CHORUS_FRUIT
+  cmd: 1115
+  flags:
+    - hide_attributes
+  display:
+    name: Рудный титан
+    lore:
+      - '<blue>Modoru: Межсезонье</blue>'
+
 boat_bottom:
-  type: paper
+  type: POPPED_CHORUS_FRUIT
   cmd: 1113
   flags:
     - hide_attributes
@@ -41,7 +63,7 @@ flippers:
     - '<blue>Modoru: Межсезонье</blue>'
 
 oxygen_tank_light:
-  type: paper
+  type: CARROT_ON_A_STICK
   display:
     name: Кислородный баллон
     lore:
@@ -49,7 +71,7 @@ oxygen_tank_light:
   cmd: 1114
 
 oxygen_tank:
-  type: paper
+  type: CARROT_ON_A_STICK
   display:
     name: Тяжёлый кислородный баллон
     lore:

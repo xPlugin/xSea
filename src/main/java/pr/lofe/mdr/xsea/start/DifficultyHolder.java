@@ -73,6 +73,7 @@ public class DifficultyHolder extends StartHolder {
                     "<color:#ebc934>|</color> <white>Игрок так-же <red><u>не сможет</u></red> есть одно и тоже подряд.</white>",
                     " ",
                     "<color:#ed5a40>-</color> <white>Количество любого получаемого <red><u>урона на 15% больше</u></red>, кроме урона от удушения под водой.</white>",
+                    "<color:#ed5a40>-</color> <white>При смерти, каждый предмет может <red><u>исчезнуть</u></red> с шансом 0.8%.</white>",
                     "<color:#ed5a40>-</color> <white>Шанс <red><u>50%</u></red> потратить 2 или шанс <red><u>25%</u></red> потратить 3 железных самородка в столе плотника за один крафт.</white>"
             ));
             meta.displayName(TextWrapper.text("<color:#e03d6b><u>Сложная</u></color> сложность").decoration(TextDecoration.ITALIC, false));

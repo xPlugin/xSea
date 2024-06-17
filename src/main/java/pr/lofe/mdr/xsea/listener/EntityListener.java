@@ -19,6 +19,7 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.FoodLevelChangeEvent;
+import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerExpChangeEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerItemConsumeEvent;
@@ -32,6 +33,8 @@ import pr.lofe.mdr.xsea.xSea;
 
 import java.time.Duration;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 
 public class EntityListener implements Listener {
 
@@ -44,6 +47,18 @@ public class EntityListener implements Listener {
                 if(diff == PlayerDifficulty.EASY && RandomUtil.nextBool(10)) event.setCancelled(true);
             }
             else if (diff == PlayerDifficulty.HARD) event.setDamage(event.getDamage() * 1.15);
+        }
+    }
+
+    @EventHandler public void onPlayerDeath(PlayerDeathEvent event) {
+        Player player = event.getPlayer();
+        if(PlayerDifficulty.getDifficulty(player) == PlayerDifficulty.HARD) {
+            for(ItemStack item: event.getDrops()) {
+                if(RandomUtil.nextBool(.8)) {
+                    event.getDrops().remove(item);
+                    break;
+                }
+            }
         }
     }
 

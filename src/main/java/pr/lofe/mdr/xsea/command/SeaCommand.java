@@ -6,17 +6,20 @@ import dev.jorel.commandapi.arguments.PlayerArgument;
 import dev.jorel.commandapi.arguments.TextArgument;
 import dev.jorel.commandapi.executors.CommandArguments;
 import net.kyori.adventure.text.Component;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import pr.lofe.lib.xbase.text.TextWrapper;
+import pr.lofe.mdr.xsea.config.Config;
 import pr.lofe.mdr.xsea.start.CamPath;
 import pr.lofe.mdr.xsea.enchant.CustomEnchantment;
 import pr.lofe.mdr.xsea.entity.PlayerDifficulty;
 import pr.lofe.mdr.xsea.start.DifficultyHolder;
 import pr.lofe.mdr.xsea.start.ResourcePackHolder;
+import pr.lofe.mdr.xsea.start.StartEngine;
 import pr.lofe.mdr.xsea.xSea;
 
 import java.io.BufferedReader;
@@ -32,6 +35,22 @@ public class SeaCommand extends Command {
     public SeaCommand() {
         super("xsea");
         src.withSubcommands(
+
+                new Command("reset-data") {
+                    @Override
+                    void execute(CommandSender sender, CommandArguments args) {
+                        Player player = (Player) args.get("player");
+                        if(player != null) {
+                            Config data = StartEngine.data;
+                            data.getConfig().set(player.getName() + ".difficulty", null);
+                            data.getConfig().set(player.getName() + ".isCompletedStart", null);
+                            data.save();
+                            player.kick(TextWrapper.text("Your ocean data has been reset."));
+                            sender.sendMessage("Сброшены игровые данные для игрока " + player.getName() + ".");
+                        }
+                    }
+                }.src.withArguments(new PlayerArgument("player")),
+
                 new Command("git") {
                     @Override
                     void execute(CommandSender sender, CommandArguments args) {
