@@ -2,7 +2,9 @@ package pr.lofe.mdr.xsea.start;
 
 import com.google.common.collect.Lists;
 import net.kyori.adventure.title.Title;
+import net.kyori.adventure.title.TitlePart;
 import org.bukkit.*;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -11,6 +13,9 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
+import org.bukkit.inventory.ItemFlag;
+import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.Nullable;
 import pr.lofe.lib.xbase.text.TextWrapper;
 import pr.lofe.mdr.xsea.config.Config;
 import pr.lofe.mdr.xsea.entity.PlayerDifficulty;
@@ -22,27 +27,25 @@ import java.util.HashSet;
 
 public class StartEngine implements Listener {
 
-    public static final Config data = new Config("data", false, false);
     private final HashSet<Player> inStart = new HashSet<>();
-    private final HashMap<Player, GameMode> locked = new HashMap<>();
+    private final HashSet<Player> locked = new HashSet<>();
 
     public StartEngine() {
 
     }
 
     public void lock(Player player) {
-        locked.put(player, player.getGameMode());
+        locked.add(player);
         player.setAllowFlight(true);
         player.setFlying(true);
-        player.setGameMode(GameMode.SPECTATOR);
+
         Location location = new Location(Bukkit.getWorld("world"), 0, 100000, 0);
         player.teleport(location);
+        wait(() -> player.setGameMode(GameMode.SPECTATOR), 2L);
     }
 
     public void unlock(Player player) {
-        player.setGameMode(locked.remove(player));
-        player.setAllowFlight(false);
-        player.setFlying(false);
+        locked.remove(player);
     }
 
     public void initStart(Player player) {
@@ -52,9 +55,58 @@ public class StartEngine implements Listener {
         player.openInventory(new ResourcePackHolder().getInventory());
     }
 
+
+
+    public static void animPart(Player player, String string) {
+        switch (string) {
+            case "preview" -> {
+                ItemStack pumpkin = new ItemStack(Material.CARVED_PUMPKIN){{
+                    addEnchantment(Enchantment.BINDING_CURSE, 1);
+                    addItemFlags(ItemFlag.HIDE_ENCHANTS);
+                    editMeta(meta -> {
+                        meta.setEnchantmentGlintOverride(false);
+                        meta.displayName(TextWrapper.text(""));
+                    });
+                }};
+
+                player.getInventory().setHelmet(pumpkin);
+                player.showTitle(Title.title(TextWrapper.text("ꐐ"), TextWrapper.text(""), Title.Times.times(Duration.ZERO, Duration.ofMillis(500), Duration.ofMillis(500))));
+                animPart(player, "pop_up");
+            }
+
+            case "pop_up" -> {
+                World overworld = Bukkit.getWorld("world");
+                assert overworld != null;
+
+                Location start = new Location(overworld, 0.5, 110.75, -1, 0, -70);
+                Location end = new Location(overworld, .5, 113.5, .5, 0, 0);
+                CamPath path = new CamPath(start, end, 3);
+
+                path.generatePath();
+                path.runPath(player);
+
+                player.showTitle(Title.title(TextWrapper.text("ꐐ"), TextWrapper.text(""), Title.Times.times(Duration.ZERO, Duration.ofMillis(250), Duration.ofMillis(500))));
+                wait(() -> player.playSound(player, Sound.ENTITY_PLAYER_SWIM, 1, 1), 16L);
+                wait(() -> {
+                    player.setGameMode(GameMode.SURVIVAL);
+                    player.getInventory().setHelmet(null);
+                }, 60L);
+
+                xSea.data.getConfig().set(player.getName() + ".isCompletedStart", true);
+                xSea.data.save();
+            }
+            default -> {}
+        }
+    }
+
+
+    private static void wait(Runnable runnable, long ticks) {
+        Bukkit.getScheduler().runTaskLater(xSea.I, runnable, ticks);
+    }
+
     @EventHandler public void onPlayerMove(PlayerMoveEvent event) {
         Player player = event.getPlayer();
-        if(locked.containsKey(player)) event.setCancelled(true);
+        if(locked.contains(player)) event.setCancelled(true);
     }
 
     @EventHandler public void onInventoryClose(InventoryCloseEvent event) {
@@ -71,39 +123,24 @@ public class StartEngine implements Listener {
                 else if (title.contains("ꓐ")) diff = PlayerDifficulty.HARD;
                 assert diff != null;
                 PlayerDifficulty.setDifficulty(player, diff);
-
                 unlock(player);
 
-                World world = Bukkit.getWorld("world");
-                assert world != null;
-
-                Location start = new Location(world, 0.5, 110.75, -1, 0, -70);
-                Location end = new Location(world, .5, 113, .5, 0, 0);
-                CamPath path = new CamPath(Lists.newArrayList(player), start, end, 5);
-                player.teleport(end);
-                path.generatePath();
-
-                player.showTitle(Title.title(TextWrapper.text("ꐐ"), TextWrapper.text(""), Title.Times.times(Duration.ZERO, Duration.ofMillis(250), Duration.ofMillis(500))));
-                path.runPath();
+                animPart(player, "preview");
                 inStart.remove(player);
-                Bukkit.getScheduler().runTaskLater(xSea.I, () -> player.playSound(player, Sound.ENTITY_PLAYER_SWIM, 1, 1), 16L);
-
-                data.getConfig().set(player.getName() + ".isCompletedStart", true);
-                data.save();
             }
         }
     }
 
     @EventHandler public void onInventoryOpen(InventoryOpenEvent event) {
         Player player = (Player) event.getPlayer();
-        if(locked.containsKey(player) && event.getInventory().getType() == InventoryType.PLAYER) {
+        if(locked.contains(player) && event.getInventory().getType() == InventoryType.PLAYER) {
             player.openInventory(new DifficultyHolder().getInventory());
         }
     }
 
     @EventHandler public void onPlayerJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
-        if(!data.getConfig().getBoolean(player.getName() + ".isCompletedStart", false)) initStart(player);
+        if(!xSea.data.getConfig().getBoolean(player.getName() + ".isCompletedStart", false)) initStart(player);
     }
 
     @EventHandler public void onInventoryDrag(InventoryDragEvent event) {

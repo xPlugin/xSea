@@ -7,6 +7,7 @@ import dev.jorel.commandapi.arguments.PlayerArgument;
 import dev.jorel.commandapi.arguments.TextArgument;
 import dev.jorel.commandapi.executors.CommandArguments;
 import net.kyori.adventure.text.Component;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -14,8 +15,8 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import pr.lofe.lib.xbase.text.TextWrapper;
 import pr.lofe.mdr.xsea.config.Config;
-import pr.lofe.mdr.xsea.start.CamPath;
 import pr.lofe.mdr.xsea.enchant.CustomEnchantment;
+import pr.lofe.mdr.xsea.entity.DisplayUpdate;
 import pr.lofe.mdr.xsea.entity.PlayerDifficulty;
 import pr.lofe.mdr.xsea.start.DifficultyHolder;
 import pr.lofe.mdr.xsea.start.ResourcePackHolder;
@@ -35,12 +36,20 @@ public class SeaCommand extends Command {
         super("xsea");
         src.withSubcommands(
 
+                new Command("update") {
+                    @Override
+                    void execute(CommandSender sender, CommandArguments args) {
+                        DisplayUpdate.update();
+                        sender.sendMessage("Обновление задач успешно.");
+                    }
+                }.src,
+
                 new Command("reset-data") {
                     @Override
                     void execute(CommandSender sender, CommandArguments args) {
                         Player player = (Player) args.get("player");
                         if(player != null) {
-                            Config data = StartEngine.data;
+                            Config data = xSea.data;
                             data.getConfig().set(player.getName() + ".difficulty", null);
                             data.getConfig().set(player.getName() + ".isCompletedStart", null);
                             data.save();
@@ -112,39 +121,16 @@ public class SeaCommand extends Command {
 
                 new EmptyCommand("animation")
                         .src.withSubcommands(
-                                new Command("setup") {
+
+                                new Command("play") {
                                     @Override
                                     void execute(CommandSender sender, CommandArguments args) {
                                         if(sender instanceof Player player) {
-                                            String pos = args.getRaw("position");
-                                            assert pos != null;
-                                            if(pos.equals("first")) AnimationHolder.first = player.getLocation();
-                                            else if(pos.equals("second")) AnimationHolder.second = player.getLocation();
-                                            player.sendMessage(TextWrapper.text("Установлена " + pos + " точка для проигрывания анимации."));
+                                            StartEngine.animPart(player, "preview");
                                         }
                                     }
-                                }.src.withArguments(new TextArgument("position").replaceSuggestions(ArgumentSuggestions.strings("first", "second"))),
-
-                                new Command("playback") {
-                                    @Override
-                                    void execute(CommandSender sender, CommandArguments args) {
-                                        if(sender instanceof Player player) {
-                                            Object rawS = args.get("seconds");
-                                            assert rawS != null;
-                                            int time = (int) rawS;
-
-                                            Location first = AnimationHolder.first, second = AnimationHolder.second;
-                                            if(first == null || second == null) {
-                                                player.sendMessage(TextWrapper.text("Одна из позиций не установлена."));
-                                                return;
-                                            }
-
-                                            CamPath path = new CamPath(Lists.newArrayList(player), first, second, time);
-                                            path.generatePath();
-                                            path.runPath();
-                                        }
-                                    }
-                                }.src.withArguments(new IntegerArgument("seconds"))),
+                                }.src
+                        ),
 
                 new Command("give") {
                     @Override

@@ -3,6 +3,7 @@ package pr.lofe.mdr.xsea.start;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
+import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
@@ -20,14 +21,10 @@ public class CamPath {
     private int taskId;
 
     private final List<Location> pathLocations = new ArrayList<>();
-    private final List<Player> players;
 
-    private final Map<Player, GameMode> playersGamemodeBefore = new HashMap<>();
-    private final Map<Player, Location> playersLocationBefore = new HashMap<>();
     private final Map<Player, Boolean> playersFlyingBefore = new HashMap<>();
 
-    public CamPath(List<Player> players, Location start, Location end, int durationInS) {
-        this.players = players;
+    public CamPath(Location start, Location end, int durationInS) {
         this.start = start;
         this.end = end;
         this.durationInTicks = durationInS * 20;
@@ -40,7 +37,7 @@ public class CamPath {
         float stepYaw = (end.getYaw() - start.getYaw()) / durationInTicks;
         float stepPitch = (end.getPitch() - start.getPitch()) / durationInTicks;
 
-        Location step = new Location(Bukkit.getWorld("world"), stepX, stepY, stepZ, stepYaw, stepPitch);
+        Location step = new Location(start.getWorld(), stepX, stepY, stepZ, stepYaw, stepPitch);
 
         pathLocations.add(start);
         for (int i = 1; i <= durationInTicks; i++) {
@@ -54,39 +51,40 @@ public class CamPath {
 
             pathLocations.add(nextlocation);
         }
+    }
 
-        for (Player player: players) {
-            playersGamemodeBefore.put(player, player.getGameMode());
-            playersLocationBefore.put(player, player.getLocation());
+    private Player[] players;
+
+    public void runPath(Player... players) {
+        this.players = players;
+
+        ArmorStand stand = start.getWorld().spawn(start, ArmorStand.class);
+        stand.setGravity(false);
+        stand.setVisible(false);
+        stand.setInvulnerable(false);
+
+        for (Player player : players) {
             playersFlyingBefore.put(player, player.isFlying());
         }
 
-        runPath();
-    }
-
-
-    public void runPath() {
-        taskId =  new BukkitRunnable() {
+        taskId = new BukkitRunnable() {
             @Override
             public void run() {
-                for (Player player : players) {
-                    if (tick == 0) {
-                        player.setGameMode(GameMode.SPECTATOR);
-                        player.teleport(start);
-                        Vector velocity = calculateVector(start, pathLocations.get(tick + 1));
-                        player.setVelocity(velocity);
-                    }
-                    else if (tick >= durationInTicks) {
-                        player.teleport(end);
-                        cancel();
-                        stop();
-                    }
-                    else if (tick > 0 && !(tick == pathLocations.size() - 1)) {
-                        player.teleport(pathLocations.get(tick));
-                        Vector velocity = calculateVector(pathLocations.get(tick), pathLocations.get(tick + 1));
-                        player.setVelocity(velocity);
-                    }
-
+                if (tick == 0) {
+                    stand.teleport(start);
+                    Vector velocity = calculateVector(start, pathLocations.get(tick + 1));
+                    stand.setVelocity(velocity);
+                    for (Player player : players) player.setSpectatorTarget(stand);
+                }
+                else if (tick >= durationInTicks) {
+                    stand.teleport(end);
+                    cancel();
+                    stop(stand);
+                }
+                else if (tick > 0 && !(tick == pathLocations.size() - 1)) {
+                    stand.teleport(pathLocations.get(tick));
+                    Vector velocity = calculateVector(pathLocations.get(tick), pathLocations.get(tick + 1));
+                    stand.setVelocity(velocity);
                 }
                 tick++;
             }
@@ -94,7 +92,7 @@ public class CamPath {
     }
 
 
-    public void stop() {
+    public void stop(ArmorStand entity) {
         try {
             Bukkit.getScheduler().cancelTask(taskId);
         }catch (Exception e) {
@@ -102,11 +100,11 @@ public class CamPath {
         }
 
         for (Player player: players) {
-            player.setGameMode(playersGamemodeBefore.remove(player));
-            player.teleport(playersLocationBefore.remove(player));
+            player.setSpectatorTarget(null);
             player.setFlying(playersFlyingBefore.remove(player));
         }
 
+        entity.remove();
     }
 
 

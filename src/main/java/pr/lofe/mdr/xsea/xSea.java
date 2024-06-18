@@ -7,8 +7,10 @@ import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 import pr.lofe.lib.xbase.text.TextWrapper;
 import pr.lofe.mdr.xsea.command.SeaCommand;
+import pr.lofe.mdr.xsea.config.Config;
 import pr.lofe.mdr.xsea.enchant.EnchantmentHandler;
 import pr.lofe.mdr.xsea.enchant.WaterResistance;
+import pr.lofe.mdr.xsea.entity.TasksRegistry;
 import pr.lofe.mdr.xsea.inv.InventoryListener;
 import pr.lofe.mdr.xsea.registry.ItemRegistry;
 import pr.lofe.mdr.xsea.listener.*;
@@ -16,13 +18,13 @@ import pr.lofe.mdr.xsea.loader.AnonymousLoader;
 import pr.lofe.mdr.xsea.registry.RecipesProvider;
 import pr.lofe.mdr.xsea.start.StartEngine;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
 public class xSea extends JavaPlugin {
+
+    public static Config data;
 
     public static xSea I;
 
+    private TasksRegistry tasks;
     private RecipesProvider recipes;
     private ItemRegistry items;
 
@@ -32,16 +34,15 @@ public class xSea extends JavaPlugin {
         I = this;
         reloadData();
 
+        data = new Config("data", false, false);
+        tasks = new TasksRegistry();
+
         try { AnonymousLoader.load(); }
         catch (Exception e) { e.printStackTrace(); }
-
-        SimpleDateFormat now = new SimpleDateFormat("dd.MM HH:mm:ss");
 
         ItemListener itemListener = new ItemListener();
         EntityListener entityListener = new EntityListener();
         Bukkit.getScheduler().scheduleSyncRepeatingTask(this, () -> {
-            String date = now.format(new Date());
-            Bukkit.getOnlinePlayers().forEach(player -> player.sendActionBar(TextWrapper.text(player.getName() + " | " + date)));
             itemListener.itemStep();
             entityListener.damage();
         }, 200L, 20L);
@@ -75,6 +76,9 @@ public class xSea extends JavaPlugin {
         CommandAPI.unregister("sea");
         Bukkit.removeRecipe(NamespacedKey.minecraft("carpenter_table"));
         Bukkit.removeRecipe(NamespacedKey.minecraft("flippers_recipe"));
+        Bukkit.removeRecipe(NamespacedKey.minecraft("oxygen_tank_light_recipe"));
+        Bukkit.removeRecipe(NamespacedKey.minecraft("oxygen_tank_recipe"));
+        Bukkit.removeRecipe(NamespacedKey.minecraft("titanium_ingot_recipe"));
 
         // ChangesDetect.onDisable();
     }
@@ -83,4 +87,5 @@ public class xSea extends JavaPlugin {
         return I.recipes;
     }
     public static ItemRegistry getItems() { return I.items; }
+    public static TasksRegistry getTasks() { return I.tasks; }
 }
