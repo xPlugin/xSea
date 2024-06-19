@@ -18,6 +18,7 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 import pr.lofe.lib.xbase.text.TextWrapper;
 import pr.lofe.mdr.xsea.config.Config;
+import pr.lofe.mdr.xsea.entity.DisplayUpdate;
 import pr.lofe.mdr.xsea.entity.PlayerDifficulty;
 import pr.lofe.mdr.xsea.xSea;
 
@@ -79,7 +80,7 @@ public class StartEngine implements Listener {
                 assert overworld != null;
 
                 Location start = new Location(overworld, 0.5, 110.75, -1, 0, -70);
-                Location end = new Location(overworld, .5, 113.5, .5, 0, 0);
+                Location end = new Location(overworld, .5, 113.2, .5, 0, 0);
                 CamPath path = new CamPath(start, end, 3);
 
                 path.generatePath();
@@ -94,6 +95,8 @@ public class StartEngine implements Listener {
 
                 xSea.data.getConfig().set(player.getName() + ".isCompletedStart", true);
                 xSea.data.save();
+
+                DisplayUpdate.update();
             }
             default -> {}
         }

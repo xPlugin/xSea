@@ -36,7 +36,6 @@ public class TasksRegistry {
             if(temp.key().toString().equals(task.key().toString())) return;
         }
         get().tasks.add(task);
-
     }
 
     public static PlayerTask getCompleting(Player player) {

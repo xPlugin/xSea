@@ -125,5 +125,12 @@
             <scope>system</scope>
             <systemPath>${project.basedir}/libs/oraxen-1.167.0.jar</systemPath>
         </dependency>
+        <dependency>
+            <groupId>com.azlagor.LiteFish</groupId>
+            <artifactId>LiteFish</artifactId>
+            <version>3.9.9</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/libs/LiteFish.jar</systemPath>
+        </dependency>
     </dependencies>
 </project>

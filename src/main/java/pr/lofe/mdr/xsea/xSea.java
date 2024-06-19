@@ -10,7 +10,9 @@ import pr.lofe.mdr.xsea.command.SeaCommand;
 import pr.lofe.mdr.xsea.config.Config;
 import pr.lofe.mdr.xsea.enchant.EnchantmentHandler;
 import pr.lofe.mdr.xsea.enchant.WaterResistance;
+import pr.lofe.mdr.xsea.entity.DisplayUpdate;
 import pr.lofe.mdr.xsea.entity.TasksRegistry;
+import pr.lofe.mdr.xsea.entity.level.PlayerLevel;
 import pr.lofe.mdr.xsea.inv.InventoryListener;
 import pr.lofe.mdr.xsea.registry.ItemRegistry;
 import pr.lofe.mdr.xsea.listener.*;
@@ -47,6 +49,8 @@ public class xSea extends JavaPlugin {
             entityListener.damage();
         }, 200L, 20L);
 
+        Bukkit.getScheduler().scheduleSyncRepeatingTask(this, DisplayUpdate::update,200L, 200L);
+
         new SeaCommand().register();
 
         register(new InventoryListener());
@@ -55,6 +59,7 @@ public class xSea extends JavaPlugin {
         register(new EnchantmentHandler());
         register(entityListener);
         register(new StartEngine());
+        register(new PlayerLevel());
 
         Bukkit.broadcast(TextWrapper.text("<blue>[xSea]</blue> [enabled]<br>Debug mode <u><green>enabled</green></u>, saving StackTrace`s to log file."));
     }
@@ -80,6 +85,8 @@ public class xSea extends JavaPlugin {
         Bukkit.removeRecipe(NamespacedKey.minecraft("oxygen_tank_recipe"));
         Bukkit.removeRecipe(NamespacedKey.minecraft("titanium_ingot_recipe"));
 
+
+        DisplayUpdate.remove();
         // ChangesDetect.onDisable();
     }
 

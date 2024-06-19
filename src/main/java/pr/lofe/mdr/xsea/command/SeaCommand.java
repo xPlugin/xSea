@@ -1,13 +1,11 @@
 package pr.lofe.mdr.xsea.command;
 
-import com.google.common.collect.Lists;
 import dev.jorel.commandapi.arguments.ArgumentSuggestions;
 import dev.jorel.commandapi.arguments.IntegerArgument;
 import dev.jorel.commandapi.arguments.PlayerArgument;
 import dev.jorel.commandapi.arguments.TextArgument;
 import dev.jorel.commandapi.executors.CommandArguments;
 import net.kyori.adventure.text.Component;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -18,6 +16,8 @@ import pr.lofe.mdr.xsea.config.Config;
 import pr.lofe.mdr.xsea.enchant.CustomEnchantment;
 import pr.lofe.mdr.xsea.entity.DisplayUpdate;
 import pr.lofe.mdr.xsea.entity.PlayerDifficulty;
+import pr.lofe.mdr.xsea.entity.level.PlayerLevel;
+import pr.lofe.mdr.xsea.entity.skill.SkillsHolder;
 import pr.lofe.mdr.xsea.start.DifficultyHolder;
 import pr.lofe.mdr.xsea.start.ResourcePackHolder;
 import pr.lofe.mdr.xsea.start.StartEngine;
@@ -141,7 +141,10 @@ public class SeaCommand extends Command {
                         String id = args.getRaw("item");
                         assert id != null;
 
-                        ItemStack item = xSea.getItems().getItem(id);
+                        ItemStack item;
+                        if(id.equals("random_level_booster")) item = PlayerLevel.generateBooster();
+                        else item = xSea.getItems().getItem(id);
+
                         if(item != null) {
                             int amount = 1;
                             if(args.get("amount") instanceof Integer integer) amount = integer;
@@ -201,12 +204,13 @@ public class SeaCommand extends Command {
                         switch (raw) {
                             case "difficulty_choose" -> inv = new DifficultyHolder().getInventory();
                             case "resourcepack_done" -> inv = new ResourcePackHolder().getInventory();
+                            case "skills" -> inv = new SkillsHolder().getInventory();
                             default -> {}
                         }
 
                         if(inv != null) player.openInventory(inv);
                     }
-                }.src.withArguments(new TextArgument("type").replaceSuggestions(ArgumentSuggestions.strings("difficulty_choose", "resourcepack_done"))).withOptionalArguments(new PlayerArgument("who"))
+                }.src.withArguments(new TextArgument("type").replaceSuggestions(ArgumentSuggestions.strings("difficulty_choose", "resourcepack_done", "skills"))).withOptionalArguments(new PlayerArgument("who"))
         ).withPermission("*");
     }
 
