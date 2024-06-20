@@ -9,7 +9,6 @@ import net.kyori.adventure.title.Title;
 import org.bukkit.*;
 import org.bukkit.advancement.Advancement;
 import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -47,12 +46,11 @@ public class PlayerLevel implements Listener {
      * 9 - 9250
      * 10 - 10750
      * 11 - 13000
-     *
      * СПОСОБЫ ПОЛУЧЕНИЯ
-     * еда (мб)
+     * еда (мб) *
      * рыба(средний опыт) *
      * билетики(50-500) *
-     * мобы(за первого убитого 20, дальше - меньше)
+     * мобы(за первого убитого 20, дальше - меньше) *
      * ачивки любые(деф - 5, цель - 15, чэлэндж влад а4 - 30) *
      * каждые 5 уровней опыта кубов +опыт, выдается один раз *
      */

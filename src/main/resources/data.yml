@@ -1,0 +1,15 @@
+just_l0fe:
+  tasks:
+    current: minecraft:carpenter_table
+  difficulty: HARD
+  isCompletedStart: true
+  maxLevel: 5
+  points: 100
+  entities:
+    - ZOMBIE
+  food:
+    days:
+      1:
+        - minecraft:golden_carrot-10
+      2:
+        - xsea:dumplings3

@@ -1,34 +1,35 @@
 package pr.lofe.mdr.xsea.listener;
 
-import com.destroystokyo.paper.event.entity.EntityRemoveFromWorldEvent;
 import com.destroystokyo.paper.event.server.ServerTickEndEvent;
-import org.bukkit.Bukkit;
-import org.bukkit.Material;
-import org.bukkit.Sound;
+import net.kyori.adventure.text.minimessage.MiniMessage;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.data.Waterlogged;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.damage.DamageSource;
 import org.bukkit.damage.DamageType;
-import org.bukkit.entity.ArmorStand;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.Player;
+import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
-import org.bukkit.event.entity.EntityDamageEvent;
-import org.bukkit.event.entity.EntitySpawnEvent;
-import org.bukkit.event.entity.FoodLevelChangeEvent;
-import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.event.entity.*;
 import org.bukkit.event.player.PlayerExpChangeEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
+import pr.lofe.lib.xbase.text.TextWrapper;
+import pr.lofe.mdr.xsea.config.Config;
+import pr.lofe.mdr.xsea.entity.FoodSystem;
 import pr.lofe.mdr.xsea.entity.PlayerDifficulty;
+import pr.lofe.mdr.xsea.entity.level.PlayerLevel;
+import pr.lofe.mdr.xsea.util.Message;
 import pr.lofe.mdr.xsea.util.RandomUtil;
 import pr.lofe.mdr.xsea.xSea;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public class EntityListener implements Listener {
 
@@ -57,13 +58,33 @@ public class EntityListener implements Listener {
     }
 
     @EventHandler public void onFoodLevelChange(FoodLevelChangeEvent event) {
-        if(event.getEntity() instanceof Player player) {
+        if(event.getEntity() instanceof Player player && event.getFoodLevel() > player.getFoodLevel()) {
             PlayerDifficulty diff = PlayerDifficulty.getDifficulty(player);
             if(diff == PlayerDifficulty.EASY) {
-                if (event.getFoodLevel() > player.getFoodLevel() && RandomUtil.nextBool(60)) event.setFoodLevel(Math.min(event.getFoodLevel() + 1, 20));
+                if (RandomUtil.nextBool(60))
+                    event.setFoodLevel(Math.min(event.getFoodLevel() + 1, 20));
             }
             else {
-                // TODO
+                String ID;
+
+                ItemStack item = event.getItem();
+                if(item != null) {
+                    String seaId = xSea.getItems().getKey(item);
+
+                    if(!seaId.equals("NULL")) ID = "xsea:" + seaId;
+                    else ID = "minecraft:" + item.getType().name().toLowerCase();
+
+                    if(FoodSystem.isFoodIndexGood(FoodSystem.getFoodIndex(player, ID))) FoodSystem.addAmount(player, ID);
+                    else {
+                        event.setCancelled(true);
+                        player.setCooldown(item.getType(), 100);
+                        player.sendMessage(Message.gen(
+                                player.getName(),
+                                "Я не буду есть " + MiniMessage.miniMessage().serialize(event.getItem().displayName()) + ", меня уже трясёт от этого."
+                        ));
+                    }
+                }
+
             }
         }
     }
@@ -105,7 +126,86 @@ public class EntityListener implements Listener {
         }
     }
 
+    @EventHandler public void onEntityDeath(EntityDeathEvent event) {
+        LivingEntity ent = event.getEntity();
+        if(ent.getLastDamageCause() instanceof EntityDamageByEntityEvent dmgEvent) {
+            if(dmgEvent.getDamager() instanceof Player player) {
+                Config data = xSea.data;
+                List<String> entities = data.getConfig().getStringList(player.getName() +  ".entities");
+
+                SpawnCategory category = ent.getSpawnCategory();
+
+                boolean affected = false;
+                for (int i = 0; i < entities.size(); i++) {
+                    String entity = entities.get(i);
+                    if(entity.contains(ent.getType().name().toLowerCase())) {
+                        int amount = Integer.parseInt(entity.split("-")[1]);
+                        amount++;
+
+                        entities.set(i, ent.getType().name().toLowerCase() + "-" + amount);
+
+                        double ratio = 1;
+                        for (int j = 0; j < amount; j++) {
+                            ratio -= 0.005;
+                        }
+
+                        double initPoints;
+                        if (category == SpawnCategory.MONSTER) initPoints = 7;
+                        else initPoints = 5;
+
+                        PlayerLevel.addPoints(player, (int) (initPoints * ratio));
+                        affected = true;
+                        break;
+                    }
+                }
+                if(!affected) {
+                    entities.add(ent.getType().name().toLowerCase() + "-1");
+
+                    int initPoints;
+                    if (category == SpawnCategory.MONSTER) initPoints = 20;
+                    else initPoints = 10;
+
+                    PlayerLevel.addPoints(player, initPoints);
+                }
+
+
+                data.getConfig().set(player.getName() + ".entities", entities);
+                data.save();
+            }
+        }
+    }
+
     @EventHandler public void tick(ServerTickEndEvent event) {
+        World world = Bukkit.getWorld("world");
+        assert world != null;
+
+        if(world.getTime() == 1) {
+            Config data = xSea.data;
+            FileConfiguration cfg = data.getConfig();
+            for(OfflinePlayer player: Bukkit.getOfflinePlayers()) {
+               // пофиксить сдвиг списков еды
+                List<List<String>> lists = new ArrayList<>();
+                for (int i = 0; i <= 7; i++) {
+                    if(i == 7) lists.add(cfg.getStringList(player.getName() + ".food.days.temp"));
+                    else lists.add(cfg.getStringList(player.getName() + ".food.days." + (i + 1)));
+                }
+                cfg.set(player.getName() + ".food.days.temp", null);
+                lists.removeFirst();
+
+                for (int i = 0; i < 7; i++) {
+                    cfg.set(player.getName() + ".food.days." + (i + 1), lists.get(i));
+                }
+                lists = null;
+
+                if(player.isOnline() && player instanceof Player online && FoodSystem.isPlayerFoodIndexGood(online)) {
+                    PlayerLevel.addPoints(online, 50);
+                }
+            }
+            System.gc();
+            data.save();
+        }
+
+
         for(Player player: Bukkit.getOnlinePlayers()) {
             boolean inWater = playerInWater(player);
             if(inWater) {
