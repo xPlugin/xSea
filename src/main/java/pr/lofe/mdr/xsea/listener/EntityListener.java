@@ -183,23 +183,24 @@ public class EntityListener implements Listener {
             Config data = xSea.data;
             FileConfiguration cfg = data.getConfig();
             for(OfflinePlayer player: Bukkit.getOfflinePlayers()) {
-               // пофиксить сдвиг списков еды
-                List<List<String>> lists = new ArrayList<>();
-                for (int i = 0; i <= 7; i++) {
-                    if(i == 7) lists.add(cfg.getStringList(player.getName() + ".food.days.temp"));
-                    else lists.add(cfg.getStringList(player.getName() + ".food.days." + (i + 1)));
-                }
-                cfg.set(player.getName() + ".food.days.temp", null);
-                lists.removeFirst();
+               if(PlayerDifficulty.getDifficulty(player) == PlayerDifficulty.HARD) {
+                   List<List<String>> lists = new ArrayList<>();
+                   for (int i = 0; i <= 7; i++) {
+                       if(i == 7) lists.add(cfg.getStringList(player.getName() + ".food.days.temp"));
+                       else lists.add(cfg.getStringList(player.getName() + ".food.days." + (i + 1)));
+                   }
+                   cfg.set(player.getName() + ".food.days.temp", null);
+                   lists.removeFirst();
 
-                for (int i = 0; i < 7; i++) {
-                    cfg.set(player.getName() + ".food.days." + (i + 1), lists.get(i));
-                }
-                lists = null;
+                   for (int i = 0; i < 7; i++) {
+                       cfg.set(player.getName() + ".food.days." + (i + 1), lists.get(i));
+                   }
+                   lists = null;
 
-                if(player.isOnline() && player instanceof Player online && FoodSystem.isPlayerFoodIndexGood(online)) {
-                    PlayerLevel.addPoints(online, 50);
-                }
+                   if(player.isOnline() && player instanceof Player online && FoodSystem.isPlayerFoodIndexGood(online)) {
+                       PlayerLevel.addPoints(online, 50);
+                   }
+               }
             }
             System.gc();
             data.save();
