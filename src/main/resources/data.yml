@@ -5,6 +5,9 @@ just_l0fe:
   isCompletedStart: true
   maxLevel: 5
   points: 100
+  upPoints: 3
+  skills:
+    - minecraft:knight-1
   entities:
     - ZOMBIE
   food:

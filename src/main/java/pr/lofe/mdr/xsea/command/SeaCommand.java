@@ -15,9 +15,11 @@ import pr.lofe.lib.xbase.text.TextWrapper;
 import pr.lofe.mdr.xsea.config.Config;
 import pr.lofe.mdr.xsea.enchant.CustomEnchantment;
 import pr.lofe.mdr.xsea.entity.DisplayUpdate;
+import pr.lofe.mdr.xsea.entity.FoodSystem;
 import pr.lofe.mdr.xsea.entity.PlayerDifficulty;
 import pr.lofe.mdr.xsea.entity.level.PlayerLevel;
 import pr.lofe.mdr.xsea.entity.skill.SkillsHolder;
+import pr.lofe.mdr.xsea.start.CamPath;
 import pr.lofe.mdr.xsea.start.DifficultyHolder;
 import pr.lofe.mdr.xsea.start.ResourcePackHolder;
 import pr.lofe.mdr.xsea.start.StartEngine;
@@ -129,7 +131,37 @@ public class SeaCommand extends Command {
                                             StartEngine.animPart(player, "preview");
                                         }
                                     }
-                                }.src
+                                }.src,
+
+                                new Command("setup") {
+                                    @Override
+                                    void execute(CommandSender sender, CommandArguments args) {
+                                        if(sender instanceof Player player) {
+                                            String pos = args.getRaw("position");
+                                            assert pos != null;
+                                            if(pos.equals("first")) AnimationHolder.first = player.getLocation();
+                                            else if(pos.equals("second")) AnimationHolder.second = player.getLocation();
+                                            player.sendMessage(TextWrapper.text("Установлена " + pos + " точка для проигрывания анимации."));
+                                        }
+                                    }
+                                }.src.withArguments(new TextArgument("position").replaceSuggestions(ArgumentSuggestions.strings("first", "second"))),
+
+                                new Command("playback") {
+                                    @Override
+                                    void execute(CommandSender sender, CommandArguments args) {
+                                        if (sender instanceof Player player) {
+                                            int time = (int) args.get("seconds");
+                                            Location first = AnimationHolder.first, second = AnimationHolder.second;
+                                            if (first == null || second == null) {
+                                                player.sendMessage(TextWrapper.text("Одна из позиций не установлена."));
+                                                return;
+                                            }
+                                            CamPath path = new CamPath(first, second, time);
+                                            path.generatePath();
+                                            path.runPath(player);
+                                        }
+                                    }
+                                }.src.withArguments(new IntegerArgument("seconds"))
                         ),
 
                 new Command("give") {
@@ -160,31 +192,55 @@ public class SeaCommand extends Command {
                         .withArguments(new PlayerArgument("player"), new TextArgument("item").replaceSuggestions(ArgumentSuggestions.strings(info -> xSea.getItems().itemsIDs().toArray(new String[0]))))
                         .withOptionalArguments(new IntegerArgument("amount", 1, 64)),
 
-                new Command("difficulty") {
-                    @Override
-                    void execute(CommandSender sender, CommandArguments args) {
-                        Player player = (Player) args.get("player");
-                        String action = args.getRaw("get-or-set");
-                        assert action != null && player != null;
 
-                        if(action.equals("get")) {
-                            PlayerDifficulty diff = PlayerDifficulty.getDifficulty(player);
-                            sender.sendMessage(TextWrapper.text("Сложность у игрока " + player.getName() + " установлена на " + diff.name()));
-                        }
-                        else if (action.equals("set")) {
-                            String newDiff = args.getRaw("new-difficulty");
-                            if(newDiff == null) {
-                                sender.sendMessage("Укажите новую сложность!");
-                                return;
+
+                new EmptyCommand("player").src.withSubcommands(
+                        new Command("difficulty") {
+                            @Override
+                            void execute(CommandSender sender, CommandArguments args) {
+                                Player player = (Player) args.get("player");
+                                String action = args.getRaw("get-or-set");
+                                assert action != null && player != null;
+
+                                if(action.equals("get")) {
+                                    PlayerDifficulty diff = PlayerDifficulty.getDifficulty(player);
+                                    sender.sendMessage(TextWrapper.text("Сложность у игрока " + player.getName() + " установлена на " + diff.name()));
+                                }
+                                else if (action.equals("set")) {
+                                    String newDiff = args.getRaw("new-difficulty");
+                                    if(newDiff == null) {
+                                        sender.sendMessage("Укажите новую сложность!");
+                                        return;
+                                    }
+                                    PlayerDifficulty diff = PlayerDifficulty.valueOf(newDiff);
+                                    PlayerDifficulty.setDifficulty(player, diff);
+                                    sender.sendMessage(TextWrapper.text("Сложность у игрока " + player.getName() + " теперь равна " + diff.name()));
+                                }
                             }
-                            PlayerDifficulty diff = PlayerDifficulty.valueOf(newDiff);
-                            PlayerDifficulty.setDifficulty(player, diff);
-                            sender.sendMessage(TextWrapper.text("Сложность у игрока " + player.getName() + " теперь равна " + diff.name()));
-                        }
-                    }
-                }.src
-                        .withArguments(new PlayerArgument("player"), new TextArgument("get-or-set").replaceSuggestions(ArgumentSuggestions.strings("get", "set")))
-                        .withOptionalArguments(new TextArgument("new-difficulty").replaceSuggestions(ArgumentSuggestions.strings("EASY", "HARD"))),
+                        }.src
+                                .withArguments(new PlayerArgument("player"), new TextArgument("get-or-set").replaceSuggestions(ArgumentSuggestions.strings("get", "set")))
+                                .withOptionalArguments(new TextArgument("new-difficulty").replaceSuggestions(ArgumentSuggestions.strings("EASY", "HARD"))),
+
+                        new Command("food") {
+                            @Override
+                            void execute(CommandSender sender, CommandArguments args) {
+                                Player player = (Player) args.get("player");
+                                String action = args.getRaw("action");
+                                assert action != null && player != null;
+
+                                if(action.equals("getIndexState")) {
+                                    FoodSystem.FoodIndexState state = FoodSystem.getIndexState(player);
+                                    String output = switch (state){
+                                        case IDEAL -> "<gradient:yellow:gold>идеально</gradient>.";
+                                        case GOOD -> "<gradient:#ffe9e6:#ff9999>правильно</gradient>.";
+                                        case POOR -> "<gradient:#edfffa:#323634>ужасно</gradient>...";
+                                    };
+                                    sender.sendMessage(TextWrapper.text("Игрок " + player.getName() + " питается <bold>" + output));
+                                }
+                            }
+                        }.src.withArguments(new PlayerArgument("player"), new TextArgument("action").replaceSuggestions(ArgumentSuggestions.strings("getIndexState")))
+                ),
+
 
                 new Command("gui") {
                     @Override
@@ -204,7 +260,10 @@ public class SeaCommand extends Command {
                         switch (raw) {
                             case "difficulty_choose" -> inv = new DifficultyHolder().getInventory();
                             case "resourcepack_done" -> inv = new ResourcePackHolder().getInventory();
-                            case "skills" -> inv = new SkillsHolder().getInventory();
+                            case "skills" -> {
+                                inv = new SkillsHolder().getInventory();
+                                SkillsHolder.modify(inv, player);
+                            }
                             default -> {}
                         }
 

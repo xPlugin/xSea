@@ -18,7 +18,6 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
-import pr.lofe.lib.xbase.text.TextWrapper;
 import pr.lofe.mdr.xsea.config.Config;
 import pr.lofe.mdr.xsea.entity.FoodSystem;
 import pr.lofe.mdr.xsea.entity.PlayerDifficulty;
@@ -197,7 +196,7 @@ public class EntityListener implements Listener {
                    }
                    lists = null;
 
-                   if(player.isOnline() && player instanceof Player online && FoodSystem.isPlayerFoodIndexGood(online)) {
+                   if(player.isOnline() && player instanceof Player online && FoodSystem.getIndexState(online) == FoodSystem.FoodIndexState.IDEAL) {
                        PlayerLevel.addPoints(online, 50);
                    }
                }

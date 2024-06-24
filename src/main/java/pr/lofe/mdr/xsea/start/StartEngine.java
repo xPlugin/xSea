@@ -1,8 +1,6 @@
 package pr.lofe.mdr.xsea.start;
 
-import com.google.common.collect.Lists;
 import net.kyori.adventure.title.Title;
-import net.kyori.adventure.title.TitlePart;
 import org.bukkit.*;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
@@ -15,15 +13,14 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
-import org.jetbrains.annotations.Nullable;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 import pr.lofe.lib.xbase.text.TextWrapper;
-import pr.lofe.mdr.xsea.config.Config;
 import pr.lofe.mdr.xsea.entity.DisplayUpdate;
 import pr.lofe.mdr.xsea.entity.PlayerDifficulty;
 import pr.lofe.mdr.xsea.xSea;
 
 import java.time.Duration;
-import java.util.HashMap;
 import java.util.HashSet;
 
 public class StartEngine implements Listener {
@@ -86,11 +83,18 @@ public class StartEngine implements Listener {
                 path.generatePath();
                 path.runPath(player);
 
+                player.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, 60, 1, true, false, false));
                 player.showTitle(Title.title(TextWrapper.text("ꐐ"), TextWrapper.text(""), Title.Times.times(Duration.ZERO, Duration.ofMillis(250), Duration.ofMillis(500))));
                 wait(() -> player.playSound(player, Sound.ENTITY_PLAYER_SWIM, 1, 1), 16L);
                 wait(() -> {
                     player.setGameMode(GameMode.SURVIVAL);
-                    player.getInventory().setHelmet(null);
+
+                    player.showTitle(Title.title(TextWrapper.text("ꐐ"), TextWrapper.text(""), Title.Times.times(Duration.ofMillis(100), Duration.ofMillis(500), Duration.ofMillis(150))));
+                    wait(() -> {
+                        player.getInventory().setHelmet(null);
+                        player.removePotionEffect(PotionEffectType.SLOWNESS);
+                        player.setGameMode(GameMode.SURVIVAL);
+                    }, 10L);
                 }, 60L);
 
                 xSea.data.getConfig().set(player.getName() + ".isCompletedStart", true);

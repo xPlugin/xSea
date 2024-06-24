@@ -11,11 +11,20 @@ import java.util.Set;
 
 public class FoodSystem {
 
-    public static boolean isPlayerFoodIndexGood(Player player) {
-        for(double foodIndex: getIndexes(player)) {
-            if(!isFoodIndexGood(foodIndex)) return false;
+    public enum FoodIndexState {
+        POOR,
+        GOOD,
+        IDEAL
+    }
+
+    public static FoodIndexState getIndexState(Player player) {
+        double[] indexes = getIndexes(player);
+        if(indexes.length == 0) return FoodIndexState.POOR;
+        for(double foodIndex: indexes) {
+            if(!isFoodIndexGood(foodIndex)) return FoodIndexState.POOR;
+            if(!isFoodIndexIdeal(foodIndex)) return FoodIndexState.GOOD;
         }
-        return true;
+        return FoodIndexState.IDEAL;
     }
 
     public static double[] getIndexes(Player player) {
@@ -57,6 +66,10 @@ public class FoodSystem {
 
     public static boolean isFoodIndexGood(double index) {
         return index <= 22.25;
+    }
+
+    public static boolean isFoodIndexIdeal(double index) {
+        return index >= 8.25 && index <= 16.25;
     }
 
     public static double getMaxFoodIndex() {

@@ -6,13 +6,16 @@ import org.bukkit.NamespacedKey;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 import pr.lofe.lib.xbase.text.TextWrapper;
+import pr.lofe.mdr.xsea.command.DebugCommand;
 import pr.lofe.mdr.xsea.command.SeaCommand;
+import pr.lofe.mdr.xsea.command.SkillsCommand;
 import pr.lofe.mdr.xsea.config.Config;
+import pr.lofe.mdr.xsea.debug.DebugMode;
 import pr.lofe.mdr.xsea.enchant.EnchantmentHandler;
 import pr.lofe.mdr.xsea.enchant.WaterResistance;
 import pr.lofe.mdr.xsea.entity.DisplayUpdate;
-import pr.lofe.mdr.xsea.entity.TasksRegistry;
 import pr.lofe.mdr.xsea.entity.level.PlayerLevel;
+import pr.lofe.mdr.xsea.entity.skill.SkillRegistry;
 import pr.lofe.mdr.xsea.inv.InventoryListener;
 import pr.lofe.mdr.xsea.registry.ItemRegistry;
 import pr.lofe.mdr.xsea.listener.*;
@@ -26,7 +29,6 @@ public class xSea extends JavaPlugin {
 
     public static xSea I;
 
-    private TasksRegistry tasks;
     private RecipesProvider recipes;
     private ItemRegistry items;
 
@@ -37,7 +39,6 @@ public class xSea extends JavaPlugin {
         reloadData();
 
         data = new Config("data", false, false);
-        tasks = new TasksRegistry();
 
         try { AnonymousLoader.load(); }
         catch (Exception e) { e.printStackTrace(); }
@@ -52,6 +53,8 @@ public class xSea extends JavaPlugin {
         Bukkit.getScheduler().scheduleSyncRepeatingTask(this, DisplayUpdate::update,200L, 200L);
 
         new SeaCommand().register();
+        new SkillsCommand().register();
+        new DebugCommand().register();
 
         register(new InventoryListener());
         register(itemListener);
@@ -60,8 +63,9 @@ public class xSea extends JavaPlugin {
         register(entityListener);
         register(new StartEngine());
         register(new PlayerLevel());
+        register(new SkillRegistry());
 
-        Bukkit.broadcast(TextWrapper.text("<blue>[xSea]</blue> [enabled]<br>Debug mode <u><green>enabled</green></u>, saving StackTrace`s to log file."));
+        Bukkit.getOnlinePlayers().stream().filter(DebugMode::isEnabled).forEach(player -> player.sendMessage(TextWrapper.text("<u>[xSea]</u> <yellow><reloaded></yellow><br><dark_gray>[You`ve seen this message because you enabled debug mode.]")));
     }
 
     private void register(Listener listener) {
@@ -74,11 +78,16 @@ public class xSea extends JavaPlugin {
 
         recipes = new RecipesProvider();
         recipes.init();
+
+        SkillRegistry.load();
     }
 
     @Override
     public void onDisable() {
         CommandAPI.unregister("sea");
+        CommandAPI.unregister("plugins");
+        CommandAPI.unregister("skills");
+        CommandAPI.unregister("debug");
         Bukkit.removeRecipe(NamespacedKey.minecraft("carpenter_table"));
         Bukkit.removeRecipe(NamespacedKey.minecraft("flippers_recipe"));
         Bukkit.removeRecipe(NamespacedKey.minecraft("oxygen_tank_light_recipe"));
@@ -94,5 +103,4 @@ public class xSea extends JavaPlugin {
         return I.recipes;
     }
     public static ItemRegistry getItems() { return I.items; }
-    public static TasksRegistry getTasks() { return I.tasks; }
 }

@@ -141,7 +141,7 @@ public class PlayerLevel implements Listener {
     @EventHandler public void onLevelChange(PlayerLevelChangeEvent event) {
         Player player = event.getPlayer();
 
-        String sprite = "ꑺ";
+        String sprite = "ꐑ";
         if(event.getNew() == 11) sprite = "ꓔ";
         player.showTitle(Title.title(
                 TextWrapper.text(sprite),
@@ -161,7 +161,15 @@ public class PlayerLevel implements Listener {
         data.getConfig().set(player.getName() + ".points", newP);
         data.save();
 
-        player.sendActionBar(TextWrapper.text("<green>+" + points + "</green> очков"));
+        String end;
+        String rawNumber = String.valueOf(points);
+        switch (rawNumber.charAt(rawNumber.length() - 1)) {
+            case '1' -> end = "очко";
+            case '2', '3', '4' -> end = "очка";
+            default -> end = "очков";
+        }
+
+        player.sendActionBar(TextWrapper.text("<green>+" + points + "</green> " + end));
         player.playSound(player, Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1f, 2f);
 
         int oldLevel = getLevelByPoints(oldP), newLevel = getLevelByPoints(newP);

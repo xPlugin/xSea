@@ -26,11 +26,9 @@ public class DisplayUpdate {
     public static void update() {
         remove();
         for(Player player: Bukkit.getOnlinePlayers()) {
-            PlayerTask task = TasksRegistry.getCompleting(player);
             int level = PlayerLevel.getLevel(player);
 
             StringBuilder buffer = new StringBuilder();
-            if(task != null) buffer.append("<white><color:#ffd061>Цель</color>: ").append(task.displayName()).append(" | ");
             buffer.append("Уровень: <color:#ffd061>").append(level).append("</color> <color:dark_gray>(");
 
             if(level == 10) buffer.append("max");

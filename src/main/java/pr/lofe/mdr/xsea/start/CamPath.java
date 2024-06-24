@@ -1,7 +1,6 @@
 package pr.lofe.mdr.xsea.start;
 
 import org.bukkit.Bukkit;
-import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Player;
@@ -104,7 +103,7 @@ public class CamPath {
             player.setFlying(playersFlyingBefore.remove(player));
         }
 
-        entity.remove();
+        Bukkit.getScheduler().runTaskLater(xSea.I, entity::remove, 1L);
     }
 
 

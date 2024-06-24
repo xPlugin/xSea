@@ -7,8 +7,6 @@ import org.bukkit.inventory.FurnaceRecipe;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.ShapedRecipe;
 import pr.lofe.mdr.xsea.enchant.WaterResistance;
-import pr.lofe.mdr.xsea.entity.DisplayUpdate;
-import pr.lofe.mdr.xsea.entity.tasks.CarpenterTableTask;
 import pr.lofe.mdr.xsea.inv.CarpenterRecipe;
 import pr.lofe.mdr.xsea.registry.ItemRegistry;
 import pr.lofe.mdr.xsea.registry.RecipesProvider;
@@ -89,8 +87,5 @@ public class AnonymousLoader {
         new FurnaceRecipe(NamespacedKey.minecraft("titanium_ingot_recipe"), items.getItem("titanium_ingot"), items.getItem("raw_titanium").getType(), 5, 300){{
             Bukkit.addRecipe(this);
         }};
-
-        new CarpenterTableTask().register();
-        Bukkit.broadcastMessage("");
     }
 }

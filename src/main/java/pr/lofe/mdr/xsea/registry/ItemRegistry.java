@@ -6,8 +6,11 @@ import org.bukkit.Color;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Registry;
+import org.bukkit.attribute.Attribute;
+import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -75,6 +78,9 @@ public class ItemRegistry {
             for(String rawFlag: flags) {
                 ItemFlag flag = ItemFlag.valueOf(rawFlag.toUpperCase());
                 if(flag == ItemFlag.HIDE_ENCHANTS) meta.setEnchantmentGlintOverride(false);
+                else if (flag == ItemFlag.HIDE_ATTRIBUTES) {
+                    meta.addAttributeModifier(Attribute.GENERIC_ARMOR, new AttributeModifier("generic.armor", 0d, AttributeModifier.Operation.ADD_NUMBER));
+                }
                 meta.addItemFlags(flag);
             }
 
