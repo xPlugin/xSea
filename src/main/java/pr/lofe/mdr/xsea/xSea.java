@@ -5,7 +5,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
-import pr.lofe.lib.xbase.text.TextWrapper;
 import pr.lofe.mdr.xsea.command.DebugCommand;
 import pr.lofe.mdr.xsea.command.SeaCommand;
 import pr.lofe.mdr.xsea.command.SkillsCommand;
@@ -56,19 +55,19 @@ public class xSea extends JavaPlugin {
         new SkillsCommand().register();
         new DebugCommand().register();
 
-        register(new InventoryListener());
-        register(itemListener);
-        register(new BlockListener());
-        register(new EnchantmentHandler());
-        register(entityListener);
-        register(new StartEngine());
-        register(new PlayerLevel());
-        register(new SkillRegistry());
+        registerListener(new InventoryListener());
+        registerListener(itemListener);
+        registerListener(new BlockListener());
+        registerListener(new EnchantmentHandler());
+        registerListener(entityListener);
+        registerListener(new StartEngine());
+        registerListener(new PlayerLevel());
+        registerListener(new SkillRegistry());
 
-        Bukkit.getOnlinePlayers().stream().filter(DebugMode::isEnabled).forEach(player -> player.sendMessage(TextWrapper.text("<u>[xSea]</u> <yellow><reloaded></yellow><br><dark_gray>[You`ve seen this message because you enabled debug mode.]")));
+        DebugMode.global("<blue>[xSea]</blue> <green>[reloaded]</green>");
     }
 
-    private void register(Listener listener) {
+    private void registerListener(Listener listener) {
         Bukkit.getPluginManager().registerEvents(listener, this);
     }
 

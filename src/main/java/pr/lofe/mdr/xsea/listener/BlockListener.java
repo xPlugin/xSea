@@ -1,12 +1,10 @@
 package pr.lofe.mdr.xsea.listener;
 
 import com.google.common.collect.Lists;
-import net.minecraft.world.level.storage.loot.LootTable;
+import io.th0rgal.oraxen.utils.drops.Loot;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.block.Block;
-import org.bukkit.block.BlockState;
-import org.bukkit.block.Chest;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
@@ -16,11 +14,9 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.event.world.ChunkPopulateEvent;
 import org.bukkit.event.world.LootGenerateEvent;
 import org.bukkit.event.world.PortalCreateEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.loot.LootContext;
 import org.bukkit.loot.LootTables;
 import pr.lofe.mdr.xsea.entity.level.PlayerLevel;
 import pr.lofe.mdr.xsea.util.RandomUtil;
@@ -29,6 +25,23 @@ import pr.lofe.mdr.xsea.xSea;
 import java.util.List;
 
 public class BlockListener implements Listener {
+
+    @EventHandler
+    public void onLootGenerate(LootGenerateEvent event) {
+        List<NamespacedKey> allowed = Lists.newArrayList(
+                LootTables.SHIPWRECK_TREASURE.getKey(),
+                LootTables.SHIPWRECK_SUPPLY.getKey(),
+                LootTables.BURIED_TREASURE.getKey(),
+                LootTables.ABANDONED_MINESHAFT.getKey()
+        );
+        if(allowed.contains(event.getLootTable().getKey())) {
+            if(RandomUtil.nextBool(30)) event.getLoot().add(PlayerLevel.generateBooster());
+        }
+
+        if(LootTables.SHIPWRECK_SUPPLY.getKey().equals(event.getLootTable().getKey())) {
+            if(RandomUtil.nextBool(70)) event.getLoot().add(new ItemStack(Material.SUGAR_CANE, RandomUtil.nextInt(3)));
+        }
+    }
 
     @EventHandler(priority = EventPriority.MONITOR) public void onBlockBreak(BlockBreakEvent event) {
         if(!event.isCancelled()) {

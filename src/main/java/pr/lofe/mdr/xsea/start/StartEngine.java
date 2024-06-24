@@ -39,7 +39,7 @@ public class StartEngine implements Listener {
 
         Location location = new Location(Bukkit.getWorld("world"), 0, 100000, 0);
         player.teleport(location);
-        wait(() -> player.setGameMode(GameMode.SPECTATOR), 2L);
+        player.setGameMode(GameMode.SPECTATOR);
     }
 
     public void unlock(Player player) {

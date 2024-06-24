@@ -91,19 +91,6 @@ public class PlayerLevel implements Listener {
         }
     }
 
-    @EventHandler
-    public void onLootGenerate(LootGenerateEvent event) {
-        List<NamespacedKey> allowed = Lists.newArrayList(
-                LootTables.SHIPWRECK_TREASURE.getKey(),
-                LootTables.SHIPWRECK_SUPPLY.getKey(),
-                LootTables.BURIED_TREASURE.getKey(),
-                LootTables.ABANDONED_MINESHAFT.getKey()
-        );
-        if(allowed.contains(event.getLootTable().getKey())) {
-            if(RandomUtil.nextBool(30)) event.getLoot().add(PlayerLevel.generateBooster());
-        }
-    }
-
     @EventHandler(priority = EventPriority.MONITOR) public void onPlayerInteract(PlayerInteractEvent event) {
         if(event.getAction() == Action.RIGHT_CLICK_AIR) {
             Player player = event.getPlayer();
