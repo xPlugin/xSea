@@ -137,9 +137,8 @@ public class PlayerLevel implements Listener {
                 TextWrapper.text(String.format("%d → <green>%d</green>", event.getOld(), event.getNew()))
         ));
         player.playSound(player, "ui.toast.challenge_complete", 1f, 1f);
-        DisplayUpdate.update();
-
         SkillRegistry.addUpPoints(player, 3);
+        DisplayUpdate.update();
     }
 
     public static boolean addPoints(Player player, int points) {

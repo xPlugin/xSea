@@ -1,19 +1,63 @@
 package pr.lofe.mdr.xsea.entity.skill;
 
+import net.coreprotect.CoreProtect;
+import net.coreprotect.CoreProtectAPI;
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.NamespacedKey;
+import org.bukkit.OfflinePlayer;
+import org.bukkit.attribute.Attribute;
+import org.bukkit.block.Block;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.entity.*;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
+import org.bukkit.event.player.PlayerItemDamageEvent;
+import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 import pr.lofe.mdr.xsea.config.Config;
+import pr.lofe.mdr.xsea.entity.level.PlayerLevel;
+import pr.lofe.mdr.xsea.util.LocationUtil;
+import pr.lofe.mdr.xsea.util.RandomUtil;
 import pr.lofe.mdr.xsea.xSea;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public class SkillRegistry implements Listener {
+
+    private final CoreProtectAPI coreProtectAPI = CoreProtect.getInstance().getAPI();
+
+    public SkillRegistry() {
+        tasks();
+    }
+
+    public void tasks() {
+        Bukkit.getScheduler().scheduleSyncRepeatingTask(xSea.I, () -> {
+            for(Player player: Bukkit.getOnlinePlayers()) {
+                if(doesPlayerHasSkill(player, NamespacedKey.minecraft("adventurer_2"))) {
+                    Location respawn = player.getRespawnLocation();
+                    if(respawn == null) respawn = new Location(player.getWorld(), 0, 113, 0);
+                    if(LocationUtil.distance(respawn, player.getLocation()) >= 500) {
+                        PotionEffect effect = player.getPotionEffect(PotionEffectType.SPEED);
+                        if(effect == null || !effect.isInfinite()) player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, -1, 0, true, true, true));
+                    }
+                    else {
+                        PotionEffect effect = player.getPotionEffect(PotionEffectType.SPEED);
+                        if(effect != null && effect.isInfinite()) player.removePotionEffect(PotionEffectType.SPEED);
+                    }
+                }
+            }
+        }, 0L, 20L);
+    }
 
     @EventHandler public void onInventoryClick(InventoryClickEvent event) {
         Inventory top = event.getView().getTopInventory();
@@ -43,6 +87,108 @@ public class SkillRegistry implements Listener {
         if(top.getHolder() instanceof SkillsHolder) event.setCancelled(true);
     }
 
+    @EventHandler public void onEntityDamageByEntity(EntityDamageByEntityEvent event) {
+        if(event.getDamager() instanceof Player player) {
+            if(event.getEntity().getType() != EntityType.PLAYER) {
+                double damage = event.getDamage();
+
+                if(doesPlayerHasSkill(player, NamespacedKey.minecraft("knight_5"))) damage += .5;
+                if(doesPlayerHasSkill(player, NamespacedKey.minecraft("knight_4"))) damage += .5;
+                if(doesPlayerHasSkill(player, NamespacedKey.minecraft("knight_1"))) damage += .5;
+
+                event.setDamage(damage);
+            }
+            else {
+                Player damaged = (Player) event.getEntity();
+                if(damaged.getHealth() + 8 > player.getHealth()) {
+                    if(RandomUtil.nextBool(30)) event.setDamage(event.getDamage() * 1.5);
+                }
+            }
+        }
+    }
+
+    @EventHandler public void onPlayerDeath(PlayerDeathEvent event) {
+        Player killer = event.getPlayer().getKiller();
+        if(killer != null && doesPlayerHasSkill(killer, NamespacedKey.minecraft("knight_6"))) {
+            if(RandomUtil.nextBool(30)) killer.addPotionEffect(new PotionEffect(PotionEffectType.STRENGTH, 600, 0, true, true, true), false);
+
+        }
+    }
+
+    @EventHandler public void onEntityDamage(EntityDamageEvent event) {
+        if(event.getEntity() instanceof Player player) {
+            if(doesPlayerHasSkill(player, NamespacedKey.minecraft("knight_7")))
+                if(player.getHealth() < 4 && RandomUtil.nextBool(1)) event.setCancelled(true);
+        }
+    }
+
+    @EventHandler public void onEntityDeath(EntityDeathEvent event) {
+        switch (event.getEntityType()) {
+            case COD, TROPICAL_FISH, SALMON, PUFFERFISH -> {
+                Player killer = event.getEntity().getKiller();
+                if(killer != null && doesPlayerHasSkill(killer, NamespacedKey.minecraft("fisher_1"))) {
+                    killer.addPotionEffect(new PotionEffect(PotionEffectType.DOLPHINS_GRACE, 100, 0, true, true, true), false);
+                }
+            }
+            default -> {}
+        }
+    }
+
+    @EventHandler public void onEntityTarget(EntityTargetLivingEntityEvent event) {
+        if(event.getTarget() instanceof Player player) {
+            if(doesPlayerHasSkill(player, NamespacedKey.minecraft("adventurer_3"))) {
+                if(player.isSneaking() && RandomUtil.nextBool(50)) event.setCancelled(true);
+            }
+        }
+    }
+
+    private final static double DEFAULT_SPEED = 0.10000000149011612;
+    @EventHandler public void onSkillDiscover(SkillDiscoverEvent event) {
+        NamespacedKey key = event.getSkill().key();
+        Player player = event.getPlayer();
+        if(key.toString().contains("adventurer_5")) player.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).setBaseValue(DEFAULT_SPEED + 0.015);
+        else if(key.toString().contains("adventurer_4")) player.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).setBaseValue(DEFAULT_SPEED + 0.01);
+
+        if(key.toString().contains("adventurer_8")) player.getAttribute(Attribute.GENERIC_SAFE_FALL_DISTANCE).setBaseValue(5);
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR) public void onFoodLevelChange(FoodLevelChangeEvent event) {
+        if(!event.isCancelled()) {
+            Player player = (Player) event.getEntity();
+            if(player.getFoodLevel() > event.getFoodLevel()) {
+                if(doesPlayerHasSkill(player, NamespacedKey.minecraft("adventurer_7")) && player.isInWater()) {
+                    if(RandomUtil.nextBool(40)) event.setCancelled(true);
+                }
+                else if(doesPlayerHasSkill(player, NamespacedKey.minecraft("adventurer_7"))) if(RandomUtil.nextBool(20)) event.setCancelled(true);
+            }
+        }
+    }
+
+    @EventHandler public void onBlockBreak(BlockBreakEvent event) {
+        Block block = event.getBlock();
+        Player player = event.getPlayer();
+
+        if (block.getType().name().contains("_ORE")) {
+            int summary = 0;
+
+            if (doesPlayerHasSkill(player, NamespacedKey.minecraft("miner_1"))) summary++;
+            if (doesPlayerHasSkill(player, NamespacedKey.minecraft("miner_4"))) summary++;
+            if (doesPlayerHasSkill(player, NamespacedKey.minecraft("miner_5"))) summary++;
+
+            if (summary > 0) {
+                List<String[]> results = coreProtectAPI.blockLookup(block, 1814400000);
+                for (String[] strings : results) {
+                    if (coreProtectAPI.parseResult(strings).getActionString().equals("place")) return;
+                }
+            }
+
+            PlayerLevel.addPoints(player, summary);
+        }
+    }
+
+    @EventHandler public void onPlayerItemDamage(PlayerItemDamageEvent event) {
+
+    }
 
     private static final List<ParentSkill> parentSkills = new ArrayList<>();
 
@@ -56,14 +202,14 @@ public class SkillRegistry implements Listener {
                 Skill.create(false, NamespacedKey.minecraft("knight_5"), "<green>+</green> Наносите по мобам на 0.5 урона больше", null, 1),
                 Skill.create(false, NamespacedKey.minecraft("knight_6"), "<green>+</green> Шанс 30% получить эффект \"Сила I\" на 30с<green>| </green> после убийства игрока", null, 1),
                 Skill.create(false, NamespacedKey.minecraft("knight_7"), "<green>+</green> Шанс 1% не получить урон если у вас меньше двух сердец.", null, 1),
-                Skill.create(false, NamespacedKey.minecraft("knight_8"), "<green>+</green> Повысьте шанс зачаровать ваш меч на \"Остроту\" V в\n<green>| </green>столе зачарования", null, 1)
+                Skill.create(false, NamespacedKey.minecraft("knight_8"), "<green>+</green> Повысьте шанс зачаровать ваш меч на \"Остроту\" V в\n<green>| </green>столе зачарования", null, 1) // scam
         );
         parentSkills.add(knight);
 
         ParentSkill fisher = new ParentSkill(NamespacedKey.minecraft("fisher"), "Добывайте рыбу обычным\nремеслом для вас, и\nвашего поселения.", "ᴘыбᴀк \uD83C\uDFA3");
         fisher.addSkills(
-                Skill.create(false, NamespacedKey.minecraft("fisher_1"), "<green>+</green> Каждая убитая под водой рыба, даёт эффект\n<green>|</green> \"Грация дельфина I\" на 3 с. Длительность не суммируется.", null, 1),
-                Skill.create(false, NamespacedKey.minecraft("fisher_2"), "<green>+</green> Повысьте шанс на хорошие предметы,\n<green>|</green> при условии что один из крючков сломался.", null, 1),
+                Skill.create(false, NamespacedKey.minecraft("fisher_1"), "<green>+</green> Каждая убитая под водой рыба, даёт эффект\n<green>|</green> \"Грация дельфина I\" на 5 с. Длительность не суммируется.", null, 1),
+                Skill.create(false, NamespacedKey.minecraft("fisher_2"), "<green>+</green> Повысьте шанс на хорошие предметы,\n<green>|</green> при условии что один из крючков сломался.", null, 1), // scam
                 Skill.create(false, NamespacedKey.minecraft("fisher_3"), "Невозможно получить.", null, 999),
                 Skill.create(false, NamespacedKey.minecraft("fisher_4"), "Невозможно получить.", null, 999),
                 Skill.create(false, NamespacedKey.minecraft("fisher_5"), "Невозможно получить.", null, 999),
@@ -75,12 +221,12 @@ public class SkillRegistry implements Listener {
 
         ParentSkill adventurer = new ParentSkill(NamespacedKey.minecraft("adventurer"), "Изучайте мир и его\nтайны! Вы явно станете\nлучшим рассказчиком.", "пʏтᴇшᴇствᴇнник \uD83D\uDD31");
         adventurer.addSkills(
-                Skill.create(false, NamespacedKey.minecraft("adventurer_1"), "<green>+</green> Каждый сундук, открытый впервые вами, имеет\n<green>|</green> более драгоценный лут", null, 1),
+                Skill.create(false, NamespacedKey.minecraft("adventurer_1"), "<green>+</green> Каждый сундук, открытый впервые вами, имеет\n<green>|</green> более драгоценный лут", null, 1), // scam
                 Skill.create(false, NamespacedKey.minecraft("adventurer_2"), "<green>+</green> Получите перманентный эффект \"Скорость I\" если вы находитесь\n<green>|</green> более в чем 500 блоках от кровати или спавна.", null, 2),
                 Skill.create(false, NamespacedKey.minecraft("adventurer_3"), "<green>+</green> Шанс в 50% что монстр не заметит вас, если вы находитесь на шифте.", null, 1),
                 Skill.create(false, NamespacedKey.minecraft("adventurer_4"), "<green>+</green> Повысьте скорость вашего персонажа на 10%", null, 1),
                 Skill.create(false, NamespacedKey.minecraft("adventurer_5"), "<green>+</green> Повысьте скорость вашего персонажа на 15%.\n<green>|</green> Перекрывает предыдущий эффект.", null, 1),
-                Skill.create(false, NamespacedKey.minecraft("adventurer_6"), "<green>+</green> Тратьте меньше голода при постоянном движении.", null, 1),
+                Skill.create(false, NamespacedKey.minecraft("adventurer_6"), "<green>+</green> Тратьте меньше голода.", null, 1),
                 Skill.create(false, NamespacedKey.minecraft("adventurer_7"), "<green>+</green> Тратьте ЕЩЁ меньше голода при плавнии.", null, 1),
                 Skill.create(false, NamespacedKey.minecraft("adventurer_8"), "<green>+</green> Минимальное кол-во блоков для падения, что-бы получить урон,\n<green>|</green> будет равняться 6 блокам.", null, 1)
         );
@@ -89,11 +235,11 @@ public class SkillRegistry implements Listener {
         ParentSkill miner = new ParentSkill(NamespacedKey.minecraft("miner"), "Добывайте драгоценности в глубинах\nэтого мира, при экстремальных условиях.", "шᴀхтᴇᴘ ⛏");
         miner.addSkills(
                 Skill.create(false, NamespacedKey.minecraft("miner_1"), "<green>+</green> Получайте 1 очко прокачки за каждую вскопанную руду", null, 1),
-                Skill.create(false, NamespacedKey.minecraft("miner_2"), "<green>+</green> Шанс 3% получить в два раза больше лута с вскопанный руды", null, 1),
+                Skill.create(false, NamespacedKey.minecraft("miner_2"), "<green>+</green> Шанс 3% получить в два раза больше лута с вскопанный руды", null, 1), // TODO
                 Skill.create(false, NamespacedKey.minecraft("miner_3"), "<green>+</green> Шанс 10% не потратить прочность на кирке при вскапывании руды.", null, 1),
                 Skill.create(false, NamespacedKey.minecraft("miner_4"), "<green>+</green> Получайте 1 очко прокачки за каждую вскопанную руду", null, 1),
-                Skill.create(false, NamespacedKey.minecraft("miner_5"), "<green>+</green> Получайте 2 очко прокачки за каждую вскопанную руду", null, 1),
-                Skill.create(false, NamespacedKey.minecraft("miner_6"), "<green>+</green> Получайте в 1.5 раза меньше опыта с руд,\n<green>|</green> но добывайте в 1.2 раза больше лута\n< с одной вскопанной руды", null, 3),
+                Skill.create(false, NamespacedKey.minecraft("miner_5"), "<green>+</green> Получайте 1 очко прокачки за каждую вскопанную руду", null, 1),
+                Skill.create(false, NamespacedKey.minecraft("miner_6"), "<green>+</green> Получайте в 1.5 раза меньше опыта с руд,\n<green>|</green> но добывайте в 1.2 раза больше лута\n<green>|</green> с одной вскопанной руды", null, 3),
                 Skill.create(false, NamespacedKey.minecraft("miner_7"), "<green>+</green> Нажмите [Shift] + [F], чтобы включить режим шахтёра.\n<green>|</green> Вскапывает до 10 прилежащих руд. Тратит в два\n<green>|</green> раза больше прочности за каждый вскопанный блок.", null, 2),
                 Skill.create(false, NamespacedKey.minecraft("miner_8"), "<green>+</green> Получите вечный эффект \"Спешка II\".", null, 3)
         );
@@ -150,6 +296,8 @@ public class SkillRegistry implements Listener {
         Skill skill = getSkill(key);
         assert skill != null;
         addUpPoints(player, -skill.currency());
+
+        Bukkit.getPluginManager().callEvent(new SkillDiscoverEvent(player, skill));
 
         Config data = xSea.data;
         List<String> skills = data.getConfig().getStringList(player.getName() + ".skills");

@@ -2,8 +2,10 @@ package pr.lofe.mdr.xsea.start;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.NamespacedKey;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Player;
+import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 import pr.lofe.mdr.xsea.xSea;
@@ -11,6 +13,8 @@ import pr.lofe.mdr.xsea.xSea;
 import java.util.*;
 
 public class CamPath {
+
+    public final static NamespacedKey TAG = new NamespacedKey(xSea.I, "viewer");
 
     private final Location start;
     private final Location end;
@@ -61,6 +65,7 @@ public class CamPath {
         stand.setGravity(false);
         stand.setVisible(false);
         stand.setInvulnerable(false);
+        stand.getPersistentDataContainer().set(TAG, PersistentDataType.BOOLEAN, true);
 
         for (Player player : players) {
             playersFlyingBefore.put(player, player.isFlying());

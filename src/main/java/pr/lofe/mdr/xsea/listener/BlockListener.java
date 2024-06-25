@@ -63,6 +63,7 @@ public class BlockListener implements Listener {
                             block.getLocation().add(.5, .2, .5),
                             xSea.getItems().getItem("raw_titanium")
                     );
+                    event.setDropItems(false);
                 }
             }
             else if (block.getType().name().contains("_ORE") && SkillRegistry.doesPlayerHasSkill(player, NamespacedKey.minecraft("miner_7"))) {

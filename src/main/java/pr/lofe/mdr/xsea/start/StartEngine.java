@@ -3,10 +3,14 @@ package pr.lofe.mdr.xsea.start;
 import net.kyori.adventure.title.Title;
 import org.bukkit.*;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.entity.ArmorStand;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.*;
+import org.bukkit.event.player.PlayerGameModeChangeEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.inventory.Inventory;
@@ -76,8 +80,8 @@ public class StartEngine implements Listener {
                 World overworld = Bukkit.getWorld("world");
                 assert overworld != null;
 
-                Location start = new Location(overworld, 0.5, 110.75, -1, 0, -70);
-                Location end = new Location(overworld, .5, 113.2, .5, 0, 0);
+                Location start = new Location(overworld, 4, 110.75, 0.5, 90, -70);
+                Location end = new Location(overworld, 2.5, 113.2, .5, 90, 0);
                 CamPath path = new CamPath(start, end, 3);
 
                 path.generatePath();
@@ -87,8 +91,6 @@ public class StartEngine implements Listener {
                 player.showTitle(Title.title(TextWrapper.text("ꐐ"), TextWrapper.text(""), Title.Times.times(Duration.ZERO, Duration.ofMillis(250), Duration.ofMillis(500))));
                 wait(() -> player.playSound(player, Sound.ENTITY_PLAYER_SWIM, 1, 1), 16L);
                 wait(() -> {
-                    player.setGameMode(GameMode.SURVIVAL);
-
                     player.showTitle(Title.title(TextWrapper.text("ꐐ"), TextWrapper.text(""), Title.Times.times(Duration.ofMillis(100), Duration.ofMillis(500), Duration.ofMillis(150))));
                     wait(() -> {
                         player.getInventory().setHelmet(null);
@@ -109,6 +111,17 @@ public class StartEngine implements Listener {
 
     private static void wait(Runnable runnable, long ticks) {
         Bukkit.getScheduler().runTaskLater(xSea.I, runnable, ticks);
+    }
+
+    @EventHandler public void onPlayerSpecator(PlayerGameModeChangeEvent event) {
+        if(event.getNewGameMode() == GameMode.SPECTATOR) {
+            Player player = event.getPlayer();
+            for(ArmorStand ent: player.getWorld().getEntitiesByClass(ArmorStand.class)) {
+                if(ent.getPersistentDataContainer().has(CamPath.TAG) && player.getSpectatorTarget() != ent) {
+                    player.hideEntity(xSea.I, ent);
+                }
+            }
+        }
     }
 
     @EventHandler public void onPlayerMove(PlayerMoveEvent event) {
