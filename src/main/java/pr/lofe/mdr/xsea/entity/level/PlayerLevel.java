@@ -27,6 +27,7 @@ import pr.lofe.lib.xbase.text.TextWrapper;
 import pr.lofe.mdr.xsea.config.Config;
 import pr.lofe.mdr.xsea.debug.DebugMode;
 import pr.lofe.mdr.xsea.entity.DisplayUpdate;
+import pr.lofe.mdr.xsea.entity.skill.SkillRegistry;
 import pr.lofe.mdr.xsea.util.RandomUtil;
 import pr.lofe.mdr.xsea.xSea;
 
@@ -137,6 +138,8 @@ public class PlayerLevel implements Listener {
         ));
         player.playSound(player, "ui.toast.challenge_complete", 1f, 1f);
         DisplayUpdate.update();
+
+        SkillRegistry.addUpPoints(player, 3);
     }
 
     public static boolean addPoints(Player player, int points) {

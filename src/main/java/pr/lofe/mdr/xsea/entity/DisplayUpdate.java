@@ -5,6 +5,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import pr.lofe.lib.xbase.text.TextWrapper;
 import pr.lofe.mdr.xsea.entity.level.PlayerLevel;
+import pr.lofe.mdr.xsea.entity.skill.SkillRegistry;
 
 import java.util.HashMap;
 
@@ -29,6 +30,9 @@ public class DisplayUpdate {
             int level = PlayerLevel.getLevel(player);
 
             StringBuilder buffer = new StringBuilder();
+
+            int upPoints = SkillRegistry.getUpPoints(player);
+            if (upPoints > 0) buffer.append("очки пᴘокᴀчки: <color:#5faff5>").append(upPoints).append("⌀</color> | ");
             buffer.append("уᴘовᴇнь: <color:#ffd061>").append(level).append("</color> <color:dark_gray>(");
 
             if(level == 10) buffer.append("max");

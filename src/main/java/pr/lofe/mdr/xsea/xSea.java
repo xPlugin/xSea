@@ -84,7 +84,6 @@ public class xSea extends JavaPlugin {
     @Override
     public void onDisable() {
         CommandAPI.unregister("sea");
-        CommandAPI.unregister("plugins");
         CommandAPI.unregister("skills");
         CommandAPI.unregister("отладка");
         Bukkit.removeRecipe(NamespacedKey.minecraft("carpenter_table"));

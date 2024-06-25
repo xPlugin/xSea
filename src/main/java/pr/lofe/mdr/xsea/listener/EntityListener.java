@@ -19,6 +19,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import pr.lofe.mdr.xsea.config.Config;
+import pr.lofe.mdr.xsea.debug.DebugMode;
 import pr.lofe.mdr.xsea.entity.FoodSystem;
 import pr.lofe.mdr.xsea.entity.PlayerDifficulty;
 import pr.lofe.mdr.xsea.entity.level.PlayerLevel;
@@ -170,6 +171,19 @@ public class EntityListener implements Listener {
 
                 data.getConfig().set(player.getName() + ".entities", entities);
                 data.save();
+            }
+        }
+    }
+
+    @EventHandler public void onEntitySpawn(EntitySpawnEvent event) {
+        Entity entity = event.getEntity();
+        if(entity.getType() == EntityType.ZOMBIE) {
+            Location loc = event.getLocation();
+            if(loc.getBlock().getBiome().getKey().toString().equals("minecraft:custom") && loc.y() < -10) {
+                if(RandomUtil.nextBool(15)) {
+                    event.setCancelled(true);
+                    loc.getWorld().spawn(loc, Blaze.class);
+                }
             }
         }
     }
