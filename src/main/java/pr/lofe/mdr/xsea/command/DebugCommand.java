@@ -12,7 +12,7 @@ import pr.lofe.mdr.xsea.debug.DebugMode;
 public class DebugCommand extends Command{
 
     public DebugCommand() {
-        super("debug");
+        super("отладка");
         src.withArguments(new TextArgument("toggle").replaceSuggestions(ArgumentSuggestions.strings("on", "off", "info")));
     }
 
@@ -32,7 +32,7 @@ public class DebugCommand extends Command{
                     player.sendMessage(TextWrapper.text("Debug mode <red><u>disabled</u></red>."));
                 }
                 case "info" -> {
-                    player.sendMessage(TextWrapper.text("Debug режим - позволяет отслеживать перезагрузки плагина <u>[xSea]</u>, и отслеживать изменения если у вас есть права оператора. Так-же, можно отслеживать разные данные и калькуляции рандома связанные с вашим геймплеем."));
+                    player.sendMessage(TextWrapper.text("Debug режим - позволяет отслеживать перезагрузки плагина <u>[xSea]</u>, и отслеживать изменения если у вас есть права оператора."));
                 }
                 default -> {
                     Component output = TextWrapper.text("<red><lang:command.unknown.command><br><gray>debug <red><u>" + toggle + "<italic><lang:command.context.here>");

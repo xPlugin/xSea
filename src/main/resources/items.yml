@@ -9,6 +9,7 @@ carpenter_table:
     lore:
       - '<blue>Modoru: Межсезонье</blue>'
 
+
 oak_plank:
   type: POPPED_CHORUS_FRUIT
   cmd: 1112
@@ -39,6 +40,28 @@ raw_titanium:
     lore:
       - '<blue>Modoru: Межсезонье</blue>'
 
+skill_init:
+  type: LEATHER_BOOTS
+  cmd: 1011
+  flags:
+    - hide_dye
+    - hide_attributes
+  display:
+    name: Первичный навык
+    lore:
+      - '<blue>Modoru: Межсезонье</blue>'
+
+skill:
+  type: LEATHER_BOOTS
+  cmd: 1012
+  flags:
+    - hide_dye
+    - hide_attributes
+  display:
+    name: Первичный навык
+    lore:
+      - '<blue>Modoru: Межсезонье</blue>'
+
 boat_bottom:
   type: POPPED_CHORUS_FRUIT
   cmd: 1113
@@ -48,6 +71,7 @@ boat_bottom:
     name: Дно лодки
     lore:
       - '<blue>Modoru: Межсезонье</blue>'
+
 flippers:
   type: leather_boots
   color: "#19FFFF"
@@ -55,6 +79,7 @@ flippers:
   flags:
     - hide_dye
     - hide_enchants
+    - hide_attributes
   enchantments:
     - depth_strider:1
   display:
@@ -77,3 +102,43 @@ oxygen_tank:
     lore:
       - '<blue>Modoru: Межсезонье</blue>'
   cmd: 1115
+
+level_booster_1:
+  type: TOTEM_OF_UNDYING
+  display:
+    name: "<white>Бустер очков</white>"
+    lore:
+      - '<blue>Modoru: Межсезонье</blue>'
+  cmd: 1000
+
+level_booster_2:
+  type: TOTEM_OF_UNDYING
+  display:
+    name: "<color:aqua>Бустер очков</color>"
+    lore:
+      - '<blue>Modoru: Межсезонье</blue>'
+  cmd: 1001
+
+level_booster_3:
+  type: TOTEM_OF_UNDYING
+  display:
+    name: "<color:light_purple>Бустер очков</color>"
+    lore:
+      - '<blue>Modoru: Межсезонье</blue>'
+  cmd: 1002
+
+level_booster_4:
+  type: TOTEM_OF_UNDYING
+  display:
+    name: "<color:red>Бустер очков</color>"
+    lore:
+      - '<blue>Modoru: Межсезонье</blue>'
+  cmd: 1003
+
+level_booster_5:
+  type: TOTEM_OF_UNDYING
+  display:
+    name: "<color:yellow>Бустер очков</color>"
+    lore:
+      - '<blue>Modoru: Межсезонье</blue>'
+  cmd: 1004

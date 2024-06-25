@@ -86,7 +86,7 @@ public class xSea extends JavaPlugin {
         CommandAPI.unregister("sea");
         CommandAPI.unregister("plugins");
         CommandAPI.unregister("skills");
-        CommandAPI.unregister("debug");
+        CommandAPI.unregister("отладка");
         Bukkit.removeRecipe(NamespacedKey.minecraft("carpenter_table"));
         Bukkit.removeRecipe(NamespacedKey.minecraft("flippers_recipe"));
         Bukkit.removeRecipe(NamespacedKey.minecraft("oxygen_tank_light_recipe"));

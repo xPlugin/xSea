@@ -25,6 +25,7 @@ import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.NotNull;
 import pr.lofe.lib.xbase.text.TextWrapper;
 import pr.lofe.mdr.xsea.config.Config;
+import pr.lofe.mdr.xsea.debug.DebugMode;
 import pr.lofe.mdr.xsea.entity.DisplayUpdate;
 import pr.lofe.mdr.xsea.util.RandomUtil;
 import pr.lofe.mdr.xsea.xSea;
@@ -101,7 +102,7 @@ public class PlayerLevel implements Listener {
                     Integer points = data.get(booster_points, PersistentDataType.INTEGER);
                     assert points != null;
 
-                    if( RandomUtil.nextBool(5)) points = (int) (points * 1.5);
+                    if(RandomUtil.nextBool(5)) points = (int) (points * 1.5);
 
                     if(addPoints(player, points)) {
                         player.playEffect(EntityEffect.TOTEM_RESURRECT);

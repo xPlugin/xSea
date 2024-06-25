@@ -29,7 +29,7 @@ public class DisplayUpdate {
             int level = PlayerLevel.getLevel(player);
 
             StringBuilder buffer = new StringBuilder();
-            buffer.append("Уровень: <color:#ffd061>").append(level).append("</color> <color:dark_gray>(");
+            buffer.append("уᴘовᴇнь: <color:#ffd061>").append(level).append("</color> <color:dark_gray>(");
 
             if(level == 10) buffer.append("max");
             else {

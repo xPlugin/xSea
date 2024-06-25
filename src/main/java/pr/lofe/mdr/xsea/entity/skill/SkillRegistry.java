@@ -49,12 +49,12 @@ public class SkillRegistry implements Listener {
     public static void load() {
         ParentSkill knight = new ParentSkill(NamespacedKey.minecraft("knight"), "Убивайте и крушите!\nСтаньте сильнейшим воином.", "охотник \uD83D\uDDE1");
         knight.addSkills(
-                Skill.create(false, NamespacedKey.minecraft("knight_1"), "", null, 1),
-                Skill.create(false, NamespacedKey.minecraft("knight_2"), "", null, 1),
-                Skill.create(false, NamespacedKey.minecraft("knight_3"), "", null, 1),
-                Skill.create(false, NamespacedKey.minecraft("knight_4"), "", null, 1),
-                Skill.create(false, NamespacedKey.minecraft("knight_5"), "", null, 1),
-                Skill.create(false, NamespacedKey.minecraft("knight_6"), "", null, 1),
+                Skill.create(false, NamespacedKey.minecraft("knight_1"), "<green>+</green> наносите по мобам на 0.5 урона больше", null, 1),
+                Skill.create(false, NamespacedKey.minecraft("knight_2"), "<green>+</green> если у игрока которого вы атакуете, здоровья\n<green>| </green> больше, чем у вас на 4 сердца, вы имеете\n<green>| </green> шанс в 30% нанести ему в 1.5 раза больше урона", null, 2),
+                Skill.create(false, NamespacedKey.minecraft("knight_3"), "<green>+</green> получайте в 1.1 раза больше опыта с убийств мобов", null, 1),
+                Skill.create(false, NamespacedKey.minecraft("knight_4"), "<green>+</green> наносите по мобам на 0.5 урона больше", null, 1),
+                Skill.create(false, NamespacedKey.minecraft("knight_5"), "<green>+</green> наносите по мобам на 0.5 урона больше", null, 1),
+                Skill.create(false, NamespacedKey.minecraft("knight_6"), "<green>+</green> ", null, 1),
                 Skill.create(false, NamespacedKey.minecraft("knight_7"), "", null, 1),
                 Skill.create(false, NamespacedKey.minecraft("knight_8"), "", null, 1)
         );
@@ -101,7 +101,7 @@ public class SkillRegistry implements Listener {
 
         ParentSkill protect = new ParentSkill(NamespacedKey.minecraft("protect"), "Станьте местным танком,\nи уклоняйтесь от любого урона.", "зᴀщитник ⛨");
         protect.addSkills(
-                Skill.create(false, NamespacedKey.minecraft("protect_1"), "", null, 1),
+                Skill.create(false, NamespacedKey.minecraft("protect_1"), "<green>+</green> получайте в 1.2 раза меньше урона,\n<green>| </green> но здоровье восстанавливается медленнее", null, 1),
                 Skill.create(false, NamespacedKey.minecraft("protect_2"), "", null, 1),
                 Skill.create(false, NamespacedKey.minecraft("protect_3"), "", null, 1),
                 Skill.create(false, NamespacedKey.minecraft("protect_4"), "", null, 1),
