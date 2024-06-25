@@ -1,13 +1,13 @@
 {
   "display": {
     "icon": {
-      "id": "minecraft:paper",
+      "id": "minecraft:POPPED_CHORUS_FRUIT",
       "components": {
         "minecraft:custom_model_data": 1112
       }
     },
     "title": {
-      "text": "Палка, бить, бубу, радостно!"
+      "text": "Палка бить бубу, радостно!"
     },
     "description": {
       "text": "Обнаружьте или скрафтите дубовую доску."
