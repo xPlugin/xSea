@@ -19,6 +19,7 @@ import org.bukkit.event.world.PortalCreateEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.loot.LootTables;
 import pr.lofe.mdr.xsea.entity.level.PlayerLevel;
+import pr.lofe.mdr.xsea.entity.skill.SkillRegistry;
 import pr.lofe.mdr.xsea.util.RandomUtil;
 import pr.lofe.mdr.xsea.xSea;
 
@@ -46,9 +47,8 @@ public class BlockListener implements Listener {
     @EventHandler(priority = EventPriority.MONITOR) public void onBlockBreak(BlockBreakEvent event) {
         if(!event.isCancelled()) {
             Block block = event.getBlock();
+            Player player = event.getPlayer();
             if(block.getType() == Material.GRAVEL) {
-                Player player = event.getPlayer();
-
                 ItemStack item = player.getActiveItem();
                 double chance;
                 switch (item.getEnchantmentLevel(Enchantment.FORTUNE)) {
@@ -65,8 +65,12 @@ public class BlockListener implements Listener {
                     );
                 }
             }
+            else if (block.getType().name().contains("_ORE") && SkillRegistry.doesPlayerHasSkill(player, NamespacedKey.minecraft("miner_7"))) {
+
+            }
         }
     }
+
 
     @EventHandler public void onPlayerInteract(PlayerInteractEvent event) {
         Block block = event.getClickedBlock();
