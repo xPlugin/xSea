@@ -48,7 +48,7 @@ public class MiningSkillUtil {
         for (BlockFace blockFace : lookup) {
             buffer = true;
             Block loop = block.getRelative(blockFace);
-            if(loop.getType() != Material.AIR && loop.getType() == block.getType()) set.add(loop);
+            if(loop.getType() != Material.AIR && loop.getType() == block.getType() && set.size() < 10) set.add(loop);
         }
 
         if(set.size() >= 10 || buffer) {
