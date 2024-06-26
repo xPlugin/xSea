@@ -2,12 +2,13 @@ package pr.lofe.mdr.xsea.entity.skill;
 
 import net.coreprotect.CoreProtect;
 import net.coreprotect.CoreProtectAPI;
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.NamespacedKey;
-import org.bukkit.OfflinePlayer;
+import org.bukkit.*;
 import org.bukkit.attribute.Attribute;
+import org.bukkit.attribute.AttributeInstance;
+import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.block.Block;
+import org.bukkit.damage.DamageSource;
+import org.bukkit.damage.DamageType;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -19,18 +20,20 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.event.player.PlayerItemDamageEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import pr.lofe.mdr.xsea.config.Config;
+import pr.lofe.mdr.xsea.debug.DebugMode;
 import pr.lofe.mdr.xsea.entity.level.PlayerLevel;
 import pr.lofe.mdr.xsea.util.LocationUtil;
 import pr.lofe.mdr.xsea.util.RandomUtil;
 import pr.lofe.mdr.xsea.xSea;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 public class SkillRegistry implements Listener {
 
@@ -55,8 +58,36 @@ public class SkillRegistry implements Listener {
                         if(effect != null && effect.isInfinite()) player.removePotionEffect(PotionEffectType.SPEED);
                     }
                 }
+
+                if(doesPlayerHasSkill(player, NamespacedKey.minecraft("miner_7"))) {
+                    PotionEffect effect = player.getPotionEffect(PotionEffectType.HASTE);
+                    if(effect == null) player.addPotionEffect(new PotionEffect(PotionEffectType.HASTE, -1, 1, true, false, true));
+                }
             }
         }, 0L, 20L);
+
+        Bukkit.getScheduler().scheduleSyncRepeatingTask(xSea.I, () -> {
+            for (Player player : Bukkit.getOnlinePlayers()) {
+                ItemStack item = player.getInventory().getItemInOffHand();
+
+                if(item.getType() == Material.SHIELD) {
+                    ItemMeta meta = item.getItemMeta();
+                    Collection<AttributeModifier> modifiers = meta.getAttributeModifiers(Attribute.GENERIC_ARMOR);
+                    if(doesPlayerHasSkill(player, NamespacedKey.minecraft("protect_3"))) {
+                        if(modifiers == null || modifiers.isEmpty()) {
+                            meta.addAttributeModifier(
+                                    Attribute.GENERIC_ARMOR,
+                                    new AttributeModifier(UUID.randomUUID(), "generic.armor", 1, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.OFF_HAND)
+                            );
+                            item.setItemMeta(meta);
+                        }
+                    }
+                    else {
+                        if(modifiers != null) meta.removeAttributeModifier(Attribute.GENERIC_ARMOR);
+                    }
+                }
+            }
+        }, 0L, 40L);
     }
 
     @EventHandler public void onInventoryClick(InventoryClickEvent event) {
@@ -103,22 +134,41 @@ public class SkillRegistry implements Listener {
                 if(damaged.getHealth() + 8 > player.getHealth()) {
                     if(RandomUtil.nextBool(30)) event.setDamage(event.getDamage() * 1.5);
                 }
+
+                if(doesPlayerHasSkill(player, NamespacedKey.minecraft("protect_2"))) {
+                    if(player.isBlocking() && RandomUtil.nextBool(20)) damaged.damage(event.getDamage() * 0.25, DamageSource.builder(DamageType.THORNS).build());
+                }
             }
         }
     }
 
     @EventHandler public void onPlayerDeath(PlayerDeathEvent event) {
         Player killer = event.getPlayer().getKiller();
-        if(killer != null && doesPlayerHasSkill(killer, NamespacedKey.minecraft("knight_6"))) {
-            if(RandomUtil.nextBool(30)) killer.addPotionEffect(new PotionEffect(PotionEffectType.STRENGTH, 600, 0, true, true, true), false);
+        if(killer != null) {
+            if(doesPlayerHasSkill(killer, NamespacedKey.minecraft("knight_6"))) {
+                if(RandomUtil.nextBool(30)) killer.addPotionEffect(new PotionEffect(PotionEffectType.STRENGTH, 600, 0, true, true, true), false);
+            }
 
+            if(doesPlayerHasSkill(killer, NamespacedKey.minecraft("protect_7"))) {
+                if(RandomUtil.nextBool(5)) killer.addPotionEffect(new PotionEffect(PotionEffectType.RESISTANCE, 100, 0, true, true, true));
+            }
         }
     }
 
     @EventHandler public void onEntityDamage(EntityDamageEvent event) {
         if(event.getEntity() instanceof Player player) {
+            if(doesPlayerHasSkill(player, NamespacedKey.minecraft("protect_1"))) event.setDamage(event.getDamage() * 0.9);
+
             if(doesPlayerHasSkill(player, NamespacedKey.minecraft("knight_7")))
                 if(player.getHealth() < 4 && RandomUtil.nextBool(1)) event.setCancelled(true);
+
+            if(doesPlayerHasSkill(player, NamespacedKey.minecraft("protect_6")) && event.getDamageSource().getDamageType().key().value().contains("_FIRE")) {
+                for (ItemStack item : player.getInventory().getArmorContents()) {
+                    if(item == null || !item.getType().name().contains("NETHERITE")) return;
+                }
+
+                event.setDamage(event.getDamage() * 0.5);
+            }
         }
     }
 
@@ -143,13 +193,34 @@ public class SkillRegistry implements Listener {
     }
 
     private final static double DEFAULT_SPEED = 0.10000000149011612;
+    private final static double DEFAULT_JUMP_STRENGTH = 0.41888888688697815;
+
     @EventHandler public void onSkillDiscover(SkillDiscoverEvent event) {
         NamespacedKey key = event.getSkill().key();
         Player player = event.getPlayer();
-        if(key.toString().contains("adventurer_5")) player.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).setBaseValue(DEFAULT_SPEED + 0.015);
-        else if(key.toString().contains("adventurer_4")) player.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).setBaseValue(DEFAULT_SPEED + 0.01);
 
-        if(key.toString().contains("adventurer_8")) player.getAttribute(Attribute.GENERIC_SAFE_FALL_DISTANCE).setBaseValue(5);
+        String str = key.toString();
+        if(str.contains("adventurer_5")) player.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).setBaseValue(DEFAULT_SPEED + 0.015);
+        else if(str.contains("adventurer_4")) player.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).setBaseValue(DEFAULT_SPEED + 0.01);
+
+        if(str.contains("adventurer_8")) player.getAttribute(Attribute.GENERIC_SAFE_FALL_DISTANCE).setBaseValue(5);
+        else if (str.contains("builder_2")) {
+            AttributeInstance attribute = player.getAttribute(Attribute.GENERIC_SAFE_FALL_DISTANCE);
+            if(attribute != null) {
+                if(attribute.getBaseValue() < 4) attribute.setBaseValue(4);
+            }
+        }
+
+        switch (key.value()) {
+            case "adventurer_8" -> player.getAttribute(Attribute.GENERIC_SAFE_FALL_DISTANCE).setBaseValue(5);
+            case "builder_4" -> player.getAttribute(Attribute.GENERIC_JUMP_STRENGTH).setBaseValue(DEFAULT_JUMP_STRENGTH + 0.1);
+            case "protect_4", "protect_5", "protect_8" -> {
+                AttributeInstance attribute = player.getAttribute(Attribute.GENERIC_MAX_HEALTH);
+                if(attribute != null) {
+                    attribute.setBaseValue(attribute.getBaseValue() + 1);
+                }
+            }
+        }
     }
 
     @EventHandler(priority = EventPriority.MONITOR) public void onFoodLevelChange(FoodLevelChangeEvent event) {
@@ -165,29 +236,44 @@ public class SkillRegistry implements Listener {
     }
 
     @EventHandler public void onBlockBreak(BlockBreakEvent event) {
-        Block block = event.getBlock();
-        Player player = event.getPlayer();
+        if(!event.isCancelled()) {
+            Block block = event.getBlock();
+            Player player = event.getPlayer();
 
-        if (block.getType().name().contains("_ORE")) {
-            int summary = 0;
+            if (block.getType().name().contains("_ORE")) {
 
-            if (doesPlayerHasSkill(player, NamespacedKey.minecraft("miner_1"))) summary++;
-            if (doesPlayerHasSkill(player, NamespacedKey.minecraft("miner_4"))) summary++;
-            if (doesPlayerHasSkill(player, NamespacedKey.minecraft("miner_5"))) summary++;
-
-            if (summary > 0) {
-                List<String[]> results = coreProtectAPI.blockLookup(block, 1814400000);
-                for (String[] strings : results) {
-                    if (coreProtectAPI.parseResult(strings).getActionString().equals("place")) return;
+                if(RandomUtil.nextBool(3)) {
+                    List<ItemStack> items = new ArrayList<>(event.getBlock().getDrops(player.getActiveItem(), player));
+                    Location loc = block.getLocation().add(.5, .2, .5);
+                    for (ItemStack item : items) {
+                        block.getWorld().dropItemNaturally(loc, item);
+                    }
                 }
-            }
 
-            PlayerLevel.addPoints(player, summary);
+
+                int summary = 0;
+
+                if (doesPlayerHasSkill(player, NamespacedKey.minecraft("miner_1"))) summary++;
+                if (doesPlayerHasSkill(player, NamespacedKey.minecraft("miner_4"))) summary++;
+                if (doesPlayerHasSkill(player, NamespacedKey.minecraft("miner_5"))) summary++;
+
+                if (summary > 0) {
+                    List<String[]> results = coreProtectAPI.blockLookup(block, 1814400000);
+                    for (String[] strings : results) {
+                        if (coreProtectAPI.parseResult(strings).getActionString().equals("place")) return;
+                    }
+                }
+
+                PlayerLevel.addPoints(player, summary);
+            }
         }
     }
 
     @EventHandler public void onPlayerItemDamage(PlayerItemDamageEvent event) {
-
+        if(event.getItem().getType().name().contains("PICKAXE")) {
+            Player player = event.getPlayer();
+            if(doesPlayerHasSkill(player, NamespacedKey.minecraft("miner_3")) && RandomUtil.nextBool(10)) event.setCancelled(true);
+        }
     }
 
     private static final List<ParentSkill> parentSkills = new ArrayList<>();
@@ -235,19 +321,19 @@ public class SkillRegistry implements Listener {
         ParentSkill miner = new ParentSkill(NamespacedKey.minecraft("miner"), "Добывайте драгоценности в глубинах\nэтого мира, при экстремальных условиях.", "шᴀхтᴇᴘ ⛏");
         miner.addSkills(
                 Skill.create(false, NamespacedKey.minecraft("miner_1"), "<green>+</green> Получайте 1 очко прокачки за каждую вскопанную руду", null, 1),
-                Skill.create(false, NamespacedKey.minecraft("miner_2"), "<green>+</green> Шанс 3% получить в два раза больше лута с вскопанный руды", null, 1), // TODO
-                Skill.create(false, NamespacedKey.minecraft("miner_3"), "<green>+</green> Шанс 10% не потратить прочность на кирке при вскапывании руды.", null, 1),
+                Skill.create(false, NamespacedKey.minecraft("miner_2"), "<green>+</green> Шанс 3% получить в два раза больше лута с вскопанный руды", null, 1),
+                Skill.create(false, NamespacedKey.minecraft("miner_3"), "<green>+</green> Шанс 10% не потратить прочность на кирке", null, 1),
                 Skill.create(false, NamespacedKey.minecraft("miner_4"), "<green>+</green> Получайте 1 очко прокачки за каждую вскопанную руду", null, 1),
                 Skill.create(false, NamespacedKey.minecraft("miner_5"), "<green>+</green> Получайте 1 очко прокачки за каждую вскопанную руду", null, 1),
-                Skill.create(false, NamespacedKey.minecraft("miner_6"), "<green>+</green> Получайте в 1.5 раза меньше опыта с руд,\n<green>|</green> но добывайте в 1.2 раза больше лута\n<green>|</green> с одной вскопанной руды", null, 3),
-                Skill.create(false, NamespacedKey.minecraft("miner_7"), "<green>+</green> Нажмите [Shift] + [F], чтобы включить режим шахтёра.\n<green>|</green> Вскапывает до 10 прилежащих руд. Тратит в два\n<green>|</green> раза больше прочности за каждый вскопанный блок.", null, 2),
-                Skill.create(false, NamespacedKey.minecraft("miner_8"), "<green>+</green> Получите вечный эффект \"Спешка II\".", null, 3)
+                Skill.create(false, NamespacedKey.minecraft("miner_6"), "<green>+</green> Получайте в 1.5 раза меньше опыта с руд,\n<green>|</green> но добывайте в 1.2 раза больше лута\n<green>|</green> с одной вскопанной руды", null, 1), // TODO
+                Skill.create(false, NamespacedKey.minecraft("miner_7"), "<green>+</green> Получите вечный эффект \"Спешка II\".", null, 2),
+                Skill.create(false, NamespacedKey.minecraft("miner_8"), "Невозможно получить.", null, 999)
         );
         parentSkills.add(miner);
 
         ParentSkill protect = new ParentSkill(NamespacedKey.minecraft("protect"), "Станьте местным танком,\nи уклоняйтесь от урона.", "зᴀщитник ⛨");
         protect.addSkills(
-                Skill.create(false, NamespacedKey.minecraft("protect_1"), "<green>+</green> Получайте в 1.1 раза меньше урона,\n<green>|</green> но здоровье восстанавливается медленнее", null, 1),
+                Skill.create(false, NamespacedKey.minecraft("protect_1"), "<green>+</green> Получайте 90% от урона,\n<green>|</green> но здоровье восстанавливается медленнее", null, 1),
                 Skill.create(false, NamespacedKey.minecraft("protect_2"), "<green>+</green> Если вы блокируете урон щитом, с шансом 20% противник\n<green>|</green> получит четверть урона, который он нанёс", null, 1),
                 Skill.create(false, NamespacedKey.minecraft("protect_3"), "<green>+</green> Щит в второй руке даёт +1 к броне", null, 1),
                 Skill.create(false, NamespacedKey.minecraft("protect_4"), "<green>+</green> Получите на одну половинку сердца больше.", null, 1),

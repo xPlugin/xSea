@@ -20,6 +20,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.loot.LootTables;
 import pr.lofe.mdr.xsea.entity.level.PlayerLevel;
 import pr.lofe.mdr.xsea.entity.skill.SkillRegistry;
+import pr.lofe.mdr.xsea.util.MiningSkillUtil;
 import pr.lofe.mdr.xsea.util.RandomUtil;
 import pr.lofe.mdr.xsea.xSea;
 

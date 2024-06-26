@@ -1,5 +1,6 @@
 package pr.lofe.mdr.xsea.start;
 
+import com.destroystokyo.paper.event.player.PlayerStopSpectatingEntityEvent;
 import net.kyori.adventure.title.Title;
 import org.bukkit.*;
 import org.bukkit.enchantments.Enchantment;
@@ -113,15 +114,8 @@ public class StartEngine implements Listener {
         Bukkit.getScheduler().runTaskLater(xSea.I, runnable, ticks);
     }
 
-    @EventHandler public void onPlayerSpecator(PlayerGameModeChangeEvent event) {
-        if(event.getNewGameMode() == GameMode.SPECTATOR) {
-            Player player = event.getPlayer();
-            for(ArmorStand ent: player.getWorld().getEntitiesByClass(ArmorStand.class)) {
-                if(ent.getPersistentDataContainer().has(CamPath.TAG) && player.getSpectatorTarget() != ent) {
-                    player.hideEntity(xSea.I, ent);
-                }
-            }
-        }
+    @EventHandler public void onPlayerStopSpectating(PlayerStopSpectatingEntityEvent event) {
+        if(event.getSpectatorTarget().getPersistentDataContainer().has(CamPath.TAG)) event.setCancelled(true);
     }
 
     @EventHandler public void onPlayerMove(PlayerMoveEvent event) {

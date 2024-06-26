@@ -3,9 +3,9 @@ package pr.lofe.mdr.xsea.util;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
-import org.bukkit.entity.Damageable;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.ArrayList;
@@ -35,10 +35,10 @@ public class MiningSkillUtil {
             block1.breakNaturally(pickaxe);
         }
         Damageable dmg = (Damageable) pickaxe.getItemMeta();
-        double hp = dmg.getHealth();
+        int hp = dmg.getDamage();
         hp = hp - (set.size() * 2);
-        dmg.setHealth(hp);
-        pickaxe.setItemMeta((ItemMeta) dmg);
+        dmg.setDamage(hp);
+        pickaxe.setItemMeta(dmg);
     }
 
     //Рекурсия - my beloved

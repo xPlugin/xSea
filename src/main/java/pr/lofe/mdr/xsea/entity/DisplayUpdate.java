@@ -6,6 +6,8 @@ import org.bukkit.entity.Player;
 import pr.lofe.lib.xbase.text.TextWrapper;
 import pr.lofe.mdr.xsea.entity.level.PlayerLevel;
 import pr.lofe.mdr.xsea.entity.skill.SkillRegistry;
+import pr.lofe.mdr.xsea.start.StartEngine;
+import pr.lofe.mdr.xsea.xSea;
 
 import java.util.HashMap;
 
@@ -27,6 +29,8 @@ public class DisplayUpdate {
     public static void update() {
         remove();
         for(Player player: Bukkit.getOnlinePlayers()) {
+            if(player.getSpectatorTarget() != null) continue;
+
             int level = PlayerLevel.getLevel(player);
 
             StringBuilder buffer = new StringBuilder();

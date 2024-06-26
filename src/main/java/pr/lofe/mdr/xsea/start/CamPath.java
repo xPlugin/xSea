@@ -67,6 +67,13 @@ public class CamPath {
         stand.setInvulnerable(false);
         stand.getPersistentDataContainer().set(TAG, PersistentDataType.BOOLEAN, true);
 
+        List<Player> players1 = new ArrayList<>(Bukkit.getOnlinePlayers());
+        for (Player player : players) {players1.remove(player);}
+
+        for (Player player : players1) {
+            player.hideEntity(xSea.I, stand);
+        }
+
         for (Player player : players) {
             playersFlyingBefore.put(player, player.isFlying());
         }
@@ -102,6 +109,8 @@ public class CamPath {
         }catch (Exception e) {
             e.printStackTrace();
         }
+
+        entity.getPersistentDataContainer().remove(TAG);
 
         for (Player player: players) {
             player.setSpectatorTarget(null);

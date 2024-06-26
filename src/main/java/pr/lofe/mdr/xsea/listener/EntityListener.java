@@ -1,6 +1,7 @@
 package pr.lofe.mdr.xsea.listener;
 
 import com.destroystokyo.paper.event.server.ServerTickEndEvent;
+import com.google.common.collect.Lists;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.*;
 import org.bukkit.block.Block;
@@ -19,10 +20,10 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import pr.lofe.mdr.xsea.config.Config;
-import pr.lofe.mdr.xsea.debug.DebugMode;
 import pr.lofe.mdr.xsea.entity.FoodSystem;
 import pr.lofe.mdr.xsea.entity.PlayerDifficulty;
 import pr.lofe.mdr.xsea.entity.level.PlayerLevel;
+import pr.lofe.mdr.xsea.entity.skill.SkillRegistry;
 import pr.lofe.mdr.xsea.util.Message;
 import pr.lofe.mdr.xsea.util.RandomUtil;
 import pr.lofe.mdr.xsea.xSea;
@@ -126,9 +127,14 @@ public class EntityListener implements Listener {
         }
     }
 
+    private final static List<EntityType> excludes = Lists.newArrayList(
+            EntityType.PLAYER,
+            EntityType.ARMOR_STAND,
+            EntityType.CHICKEN
+    );
     @EventHandler public void onEntityDeath(EntityDeathEvent event) {
         LivingEntity ent = event.getEntity();
-        if(ent.getLastDamageCause() instanceof EntityDamageByEntityEvent dmgEvent) {
+        if(!excludes.contains(ent.getType()) && ent.getLastDamageCause() instanceof EntityDamageByEntityEvent dmgEvent) {
             if(dmgEvent.getDamager() instanceof Player player) {
                 Config data = xSea.data;
                 List<String> entities = data.getConfig().getStringList(player.getName() +  ".entities");
@@ -243,6 +249,9 @@ public class EntityListener implements Listener {
                 if("oxygen_tank_light".equals(id)) balloonCapacity = 1500;
                 else if ("oxygen_tank".equals(id)) balloonCapacity = 2700;
             }
+
+            if(SkillRegistry.doesPlayerHasSkill(player, NamespacedKey.minecraft("builder_3"))) balloonCapacity += 200;
+            else if(SkillRegistry.doesPlayerHasSkill(player, NamespacedKey.minecraft("builder_1"))) balloonCapacity += 100;
 
             airTick.putIfAbsent(player, balloonCapacity);
             int currentAmount = airTick.get(player);
