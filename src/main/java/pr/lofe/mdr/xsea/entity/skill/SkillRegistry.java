@@ -79,12 +79,12 @@ public class SkillRegistry implements Listener {
                                     Attribute.GENERIC_ARMOR,
                                     new AttributeModifier(UUID.randomUUID(), "generic.armor", 1, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.OFF_HAND)
                             );
-                            item.setItemMeta(meta);
                         }
                     }
                     else {
                         if(modifiers != null) meta.removeAttributeModifier(Attribute.GENERIC_ARMOR);
                     }
+                    item.setItemMeta(meta);
                 }
             }
         }, 0L, 40L);
