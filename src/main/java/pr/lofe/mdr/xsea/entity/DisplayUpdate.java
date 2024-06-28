@@ -23,7 +23,6 @@ public class DisplayUpdate {
                 prev = null;
             }
         }
-        System.gc();
     }
 
     public static void update() {
