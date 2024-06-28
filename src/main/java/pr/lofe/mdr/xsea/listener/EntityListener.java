@@ -221,7 +221,6 @@ public class EntityListener implements Listener {
                    }
                }
             }
-            System.gc();
             data.save();
         }
 

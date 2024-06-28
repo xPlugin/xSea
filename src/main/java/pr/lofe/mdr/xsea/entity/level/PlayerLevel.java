@@ -59,7 +59,7 @@ public class PlayerLevel implements Listener {
 
     @EventHandler public void onFishCatch(CatchEvent event) {
         Player player = event.getPlayer();
-        addPoints(player, RandomUtil.nextInt(10));
+        addPoints(player, RandomUtil.nextInt(5));
     }
 
     @EventHandler(priority = EventPriority.MONITOR) public void onExperienceEvent(PlayerPickupExperienceEvent event) {
