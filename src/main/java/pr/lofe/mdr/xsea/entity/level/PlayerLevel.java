@@ -229,7 +229,7 @@ public class PlayerLevel implements Listener {
             case 8 -> threshold = 6900;
             case 9 -> threshold = 7900;
             case 10 -> threshold = 9250;
-            case 11 -> threshold = 10750;
+            case 11 -> threshold = 10750; // Для стрима на всякий случай. Не говори что он вообще есть, он как бы скрыт
         }
         return threshold;
     }
