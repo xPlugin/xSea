@@ -147,8 +147,10 @@ public class PlayerLevel implements Listener {
         Config data = xSea.data;
         int oldP = data.getConfig().getInt(player.getName() + ".points", 0);
 
-        points = points(getLevelByPoints(oldP), points);
-        if(points <= 0) points = 1;
+        if (!shouldIgnoreLevel) {
+            points = points(getLevelByPoints(oldP), points);
+            if(points <= 0) points = 1;
+        }
         int newP = oldP + points;
         if(newP <= 0) return false;
 
@@ -237,8 +239,8 @@ public class PlayerLevel implements Listener {
             case 7 -> threshold = 5150;
             case 8 -> threshold = 6900;
             case 9 -> threshold = 7900;
-            case 10 -> threshold = 9250;
-            case 11 -> threshold = 10750; // Для стрима на всякий случай. Не говори что он вообще есть, он как бы скрыт
+            case 10 -> threshold = 10000;
+            case 11 -> threshold = 11250; // Для стрима на всякий случай. Не говори что он вообще есть, он как бы скрыт
         }
         return threshold;
     }
