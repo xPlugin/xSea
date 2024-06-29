@@ -147,11 +147,9 @@ public class PlayerLevel implements Listener {
         Config data = xSea.data;
         int oldP = data.getConfig().getInt(player.getName() + ".points", 0);
 
-        double calculate = points * (1 - (double) (getLevel(player) / 10));
-        if(calculate <= 0) calculate = 1;
-        else if (calculate > points) calculate = points;
-
-        int newP = oldP + (int) calculate;
+        points = points(getLevelByPoints(oldP), points);
+        if(points <= 0) points = 1;
+        int newP = oldP + points;
         if(newP <= 0) return false;
 
         data.getConfig().set(player.getName() + ".points", newP);
@@ -173,6 +171,11 @@ public class PlayerLevel implements Listener {
             Bukkit.getPluginManager().callEvent(new PlayerLevelChangeEvent(player, oldLevel, newLevel));
         }
         return true;
+    }
+
+    public static int points(double level, int points) {
+        double calculate = points * (1d - level / 10);
+        return (int) calculate;
     }
 
     private static int generateBoosterLevel() {

@@ -80,21 +80,13 @@ public class DifficultyHolder extends StartHolder {
             meta.displayName(TextWrapper.text("<color:#e03d6b><u>Сложная</u></color> сложность").decoration(TextDecoration.ITALIC, false));
         });
 
-        ItemStack accept = empty.clone();
-        accept.editMeta(meta -> {
-            meta.lore(lore(
-                    " ",
-                    "<white>Надеемся, что вы сделали <gold><u>правильный</u></gold> выбор!</white>"
-            ));
-            meta.displayName(TextWrapper.text("<green><u>Принять</u></green> и продолжить").decoration(TextDecoration.ITALIC, false));
-        });
+
 
         for (int i = 0; i < 36; i++) {
             switch (i) {
                 case 3, 4, 5 -> inv.setItem(i, pick);
                 case 19, 20, 21 -> inv.setItem(i, easy);
                 case 23, 24, 25 -> inv.setItem(i, hard);
-                case 31 -> inv.setItem(31, accept);
                 default -> {}
             }
         }
@@ -126,7 +118,18 @@ public class DifficultyHolder extends StartHolder {
                 top.setItem(20, easy);
                 top.setItem(21, easy);
             }
-            case 23, 24, 25 -> inv.setTitle("§fꐮꓐ");
+            case 23, 24, 25 -> {
+                inv.setTitle("§fꐮꓐ");
+                ItemStack accept = empty.clone();
+                accept.editMeta(meta -> {
+                    meta.lore(lore(
+                            " ",
+                            "<white>Надеемся, что вы сделали <gold><u>правильный</u></gold> выбор!</white>"
+                    ));
+                    meta.displayName(TextWrapper.text("<green><u>Принять</u></green> и продолжить").decoration(TextDecoration.ITALIC, false));
+                });
+                inv.getTopInventory().setItem(31, accept);
+            }
             case 31 -> {
                 if(inv.getTitle().contains("ꓑ") || inv.getTitle().contains("ꓐ")) {
                     player.closeInventory(InventoryCloseEvent.Reason.PLUGIN);

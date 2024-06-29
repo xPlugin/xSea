@@ -171,7 +171,7 @@ public class StartEngine implements Listener {
             int slot = event.getSlot();
             Player player = (Player) event.getWhoClicked();
 
-            if(holder instanceof DifficultyHolder holder1) {
+            if(holder instanceof DifficultyHolder holder1 && inStart.contains(player)) {
                 boolean doesSomethingUpdated = holder1.update(event.getView(), slot, player);
                 if(doesSomethingUpdated) {
                     player.playSound(player, "custom.sfx.menu-click", 1f, 1f);

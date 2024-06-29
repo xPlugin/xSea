@@ -45,15 +45,21 @@ public class BlockListener implements Listener {
             if(RandomUtil.nextBool(70)) event.getLoot().add(new ItemStack(Material.SUGAR_CANE, RandomUtil.nextInt(3)));
         }
 
+        if(LootTables.RUINED_PORTAL.getKey().equals(event.getLootTable().getKey())) {
+            if(RandomUtil.nextBool(20)) event.getLoot().add(new ItemStack(Material.NETHERITE_UPGRADE_SMITHING_TEMPLATE));
+        }
+
         Entity ent = event.getEntity();
         if(ent instanceof Player player) {
             if(SkillRegistry.doesPlayerHasSkill(player, NamespacedKey.minecraft("adventurer_1"))) {
                 List<ItemStack> loot = event.getLoot();
                 for (int i = 0; i < loot.size(); i++) {
-                    if(RandomUtil.nextBool(60)) {
+                    if(RandomUtil.nextBool(30)) {
                         ItemStack item = loot.get(i);
-                        item.setAmount(Math.min(item.getAmount() + RandomUtil.nextInt(3), 64));
-                        loot.set(i, item);
+                        if(item.getItemMeta().hasMaxStackSize() && item.getItemMeta().getMaxStackSize() == 64 && item.getType() != Material.HEART_OF_THE_SEA) {
+                            item.setAmount(Math.min(item.getAmount() + RandomUtil.nextInt(2), 64));
+                            loot.set(i, item);
+                        }
                     }
                 }
             }

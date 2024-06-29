@@ -5,9 +5,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
-import pr.lofe.mdr.xsea.command.DebugCommand;
-import pr.lofe.mdr.xsea.command.SeaCommand;
-import pr.lofe.mdr.xsea.command.SkillsCommand;
+import pr.lofe.mdr.xsea.command.*;
 import pr.lofe.mdr.xsea.config.Config;
 import pr.lofe.mdr.xsea.debug.DebugMode;
 import pr.lofe.mdr.xsea.enchant.EnchantmentHandler;
@@ -54,6 +52,7 @@ public class xSea extends JavaPlugin {
         new SeaCommand().register();
         new SkillsCommand().register();
         new DebugCommand().register();
+        new DifficultyCommand().register();
 
         registerListener(new InventoryListener());
         registerListener(itemListener);
@@ -86,6 +85,7 @@ public class xSea extends JavaPlugin {
         CommandAPI.unregister("sea");
         CommandAPI.unregister("skills");
         CommandAPI.unregister("отладка");
+        CommandAPI.unregister("сложность");
         Bukkit.removeRecipe(NamespacedKey.minecraft("carpenter_table"));
         Bukkit.removeRecipe(NamespacedKey.minecraft("flippers_recipe"));
         Bukkit.removeRecipe(NamespacedKey.minecraft("oxygen_tank_light_recipe"));

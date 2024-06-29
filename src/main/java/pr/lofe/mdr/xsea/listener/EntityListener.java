@@ -240,7 +240,7 @@ public class EntityListener implements Listener {
 
         for(Player player: Bukkit.getOnlinePlayers()) {
             boolean inWater = playerInWater(player);
-            if(inWater) {
+            if(inWater && !player.hasPotionEffect(PotionEffectType.CONDUIT_POWER)) {
                 ItemStack item = player.getInventory().getBoots(); // getBoobs
                 if(xSea.getItems().getKey(item).equals("flippers")) {
                     PotionEffect effect = player.getPotionEffect(PotionEffectType.DOLPHINS_GRACE);
