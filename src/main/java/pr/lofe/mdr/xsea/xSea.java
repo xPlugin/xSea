@@ -47,9 +47,9 @@ public class xSea extends JavaPlugin {
         Bukkit.getScheduler().scheduleSyncRepeatingTask(this, () -> {
             itemListener.itemStep();
             entityListener.damage();
-        }, 200L, 20L);
+        }, 0L, 20L);
 
-        Bukkit.getScheduler().scheduleSyncRepeatingTask(this, DisplayUpdate::update,200L, 200L);
+        Bukkit.getScheduler().scheduleSyncRepeatingTask(this, DisplayUpdate::update,0L, 200L);
 
         new SeaCommand().register();
         new SkillsCommand().register();

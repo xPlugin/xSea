@@ -1,5 +1,6 @@
 package pr.lofe.mdr.xsea.entity.skill;
 
+import com.google.common.collect.Lists;
 import net.coreprotect.CoreProtect;
 import net.coreprotect.CoreProtectAPI;
 import org.bukkit.*;
@@ -235,12 +236,30 @@ public class SkillRegistry implements Listener {
         }
     }
 
+    private final static List<Material> includes = Lists.newArrayList(
+            Material.DEEPSLATE_DIAMOND_ORE,
+            Material.DIAMOND_ORE,
+
+            Material.LAPIS_ORE,
+            Material.DEEPSLATE_LAPIS_ORE,
+
+            Material.REDSTONE_ORE,
+            Material.DEEPSLATE_REDSTONE_ORE,
+
+            Material.ANCIENT_DEBRIS,
+            Material.NETHER_QUARTZ_ORE,
+            Material.EMERALD_ORE,
+            Material.DEEPSLATE_EMERALD_ORE,
+
+            Material.GOLD_ORE,
+            Material.DEEPSLATE_GOLD_ORE
+    );
     @EventHandler public void onBlockBreak(BlockBreakEvent event) {
         if(!event.isCancelled()) {
             Block block = event.getBlock();
             Player player = event.getPlayer();
 
-            if (block.getType().name().contains("_ORE")) {
+            if (includes.contains(block.getType())) {
 
                 if(RandomUtil.nextBool(3)) {
                     List<ItemStack> items = new ArrayList<>(event.getBlock().getDrops(player.getActiveItem(), player));

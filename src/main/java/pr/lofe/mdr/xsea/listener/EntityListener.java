@@ -9,6 +9,7 @@ import org.bukkit.block.data.Waterlogged;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.damage.DamageSource;
 import org.bukkit.damage.DamageType;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -17,6 +18,7 @@ import org.bukkit.event.entity.*;
 import org.bukkit.event.player.PlayerExpChangeEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import pr.lofe.mdr.xsea.config.Config;
@@ -57,6 +59,8 @@ public class EntityListener implements Listener {
             }
         }
     }
+
+
 
     @EventHandler public void onFoodLevelChange(FoodLevelChangeEvent event) {
         if(event.getEntity() instanceof Player player && event.getFoodLevel() > player.getFoodLevel()) {
@@ -127,14 +131,23 @@ public class EntityListener implements Listener {
         }
     }
 
+    @EventHandler public void onMobSpawnedFromSpawner(EntitySpawnEvent event) {
+
+    }
+
     private final static List<EntityType> excludes = Lists.newArrayList(
             EntityType.PLAYER,
             EntityType.ARMOR_STAND,
-            EntityType.CHICKEN
+            EntityType.CHICKEN,
+            EntityType.MAGMA_CUBE,
+            EntityType.SLIME
     );
     @EventHandler public void onEntityDeath(EntityDeathEvent event) {
         LivingEntity ent = event.getEntity();
         if(!excludes.contains(ent.getType()) && ent.getLastDamageCause() instanceof EntityDamageByEntityEvent dmgEvent) {
+
+            if(ent.getEntitySpawnReason() == CreatureSpawnEvent.SpawnReason.SPAWNER) return;
+
             if(dmgEvent.getDamager() instanceof Player player) {
                 Config data = xSea.data;
                 List<String> entities = data.getConfig().getStringList(player.getName() +  ".entities");
@@ -152,7 +165,7 @@ public class EntityListener implements Listener {
 
                         double ratio = 1;
                         for (int j = 0; j < amount; j++) {
-                            ratio -= 0.005;
+                            ratio -= 0.01;
                         }
 
                         double initPoints;
@@ -249,6 +262,15 @@ public class EntityListener implements Listener {
                 else if ("oxygen_tank".equals(id)) balloonCapacity = 2700;
             }
 
+            ItemStack item = player.getInventory().getHelmet();
+            if(item != null) {
+                ItemMeta meta = item.getItemMeta();
+                if(meta != null && meta.hasEnchant(Enchantment.RESPIRATION)) {
+                    int level = meta.getEnchantLevel(Enchantment.RESPIRATION);
+                    balloonCapacity += level * 200;
+                }
+            }
+
             if(SkillRegistry.doesPlayerHasSkill(player, NamespacedKey.minecraft("builder_3"))) balloonCapacity += 200;
             else if(SkillRegistry.doesPlayerHasSkill(player, NamespacedKey.minecraft("builder_1"))) balloonCapacity += 100;
 
@@ -283,7 +305,7 @@ public class EntityListener implements Listener {
 
     public void damage() {
         for(Player player: Bukkit.getOnlinePlayers()) {
-            if(playerInWater(player)) {
+            if(playerInWater(player) && !player.hasPotionEffect(PotionEffectType.WATER_BREATHING)) {
                 airTick.putIfAbsent(player, 700);
                 int currentAmount = airTick.get(player);
                 if(currentAmount <= 1) {

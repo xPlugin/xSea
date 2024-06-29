@@ -5,7 +5,7 @@ import java.util.Random;
 public class RandomUtil {
 
     public static boolean nextBool(double chance) {
-        return Math.random() < chance / 100;
+        return new Random().nextDouble() < chance / 100;
     }
 
     public static int nextInt(int max) {

@@ -9,6 +9,7 @@ import pr.lofe.mdr.xsea.entity.skill.SkillsHolder;
 public class SkillsCommand extends Command{
     public SkillsCommand() {
         super("skills");
+        src.withAliases("скиллы");
     }
 
     @Override

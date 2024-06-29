@@ -70,7 +70,7 @@ public class PlayerLevel implements Listener {
                 if(level % 5 == 0) {
                     Config data = xSea.data;
                     int maxLevel = data.getConfig().getInt(player.getName() + ".maxLevel", 0);
-                    if(maxLevel < level) addPoints(player, (int) (level * 1.5));
+                    if(maxLevel < level) addPoints(player, level);
                     data.getConfig().set(player.getName() + ".maxLevel", level);
                     data.save();
                 }
@@ -137,7 +137,7 @@ public class PlayerLevel implements Listener {
                 TextWrapper.text(String.format("%d → <green>%d</green>", event.getOld(), event.getNew()))
         ));
         player.playSound(player, "ui.toast.challenge_complete", 1f, 1f);
-        SkillRegistry.addUpPoints(player, 3);
+        SkillRegistry.addUpPoints(player, event.getNew() >= 9 ? 4 : 3);
         DisplayUpdate.update();
     }
 
@@ -147,7 +147,13 @@ public class PlayerLevel implements Listener {
         Config data = xSea.data;
         int oldP = data.getConfig().getInt(player.getName() + ".points", 0);
 
-        int newP = oldP + points;
+        double calculate = points * (1 - (double) (getLevel(player) / 10));
+        if(calculate <= 0) calculate = 1;
+        else if (calculate > points) calculate = points;
+
+        int newP = oldP + (int) calculate;
+        if(newP <= 0) return false;
+
         data.getConfig().set(player.getName() + ".points", newP);
         data.save();
 
