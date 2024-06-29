@@ -59,7 +59,7 @@ public class PlayerLevel implements Listener {
 
     @EventHandler public void onFishCatch(CatchEvent event) {
         Player player = event.getPlayer();
-        addPoints(player, RandomUtil.nextInt(5));
+        addPoints(player, RandomUtil.nextInt(5), false);
     }
 
     @EventHandler(priority = EventPriority.MONITOR) public void onExperienceEvent(PlayerPickupExperienceEvent event) {
@@ -70,7 +70,7 @@ public class PlayerLevel implements Listener {
                 if(level % 5 == 0) {
                     Config data = xSea.data;
                     int maxLevel = data.getConfig().getInt(player.getName() + ".maxLevel", 0);
-                    if(maxLevel < level) addPoints(player, level);
+                    if(maxLevel < level) addPoints(player, level, false);
                     data.getConfig().set(player.getName() + ".maxLevel", level);
                     data.save();
                 }
@@ -89,7 +89,7 @@ public class PlayerLevel implements Listener {
                 case CHALLENGE -> points = 30;
                 default -> points = 0;
             }
-            addPoints(event.getPlayer(), points);
+            addPoints(event.getPlayer(), points, false);
         }
     }
 
@@ -105,7 +105,7 @@ public class PlayerLevel implements Listener {
 
                     if(RandomUtil.nextBool(5)) points = (int) (points * 1.5);
 
-                    if(addPoints(player, points)) {
+                    if(addPoints(player, points, true)) {
                         player.playEffect(EntityEffect.TOTEM_RESURRECT);
                         Bukkit.getScheduler().runTaskLater(xSea.I, () -> player.getInventory().setItemInMainHand(null), 0L);
                     }
@@ -141,7 +141,7 @@ public class PlayerLevel implements Listener {
         DisplayUpdate.update();
     }
 
-    public static boolean addPoints(Player player, int points) {
+    public static boolean addPoints(Player player, int points, boolean shouldIgnoreLevel) {
         if(points <= 0) return false;
 
         Config data = xSea.data;

@@ -172,7 +172,7 @@ public class EntityListener implements Listener {
                         if (category == SpawnCategory.MONSTER) initPoints = 7;
                         else initPoints = 5;
 
-                        PlayerLevel.addPoints(player, (int) (initPoints * ratio));
+                        PlayerLevel.addPoints(player, (int) (initPoints * ratio), false);
                         affected = true;
                         break;
                     }
@@ -184,7 +184,7 @@ public class EntityListener implements Listener {
                     if (category == SpawnCategory.MONSTER) initPoints = 20;
                     else initPoints = 10;
 
-                    PlayerLevel.addPoints(player, initPoints);
+                    PlayerLevel.addPoints(player, initPoints, false);
                 }
 
 
@@ -230,7 +230,7 @@ public class EntityListener implements Listener {
                    lists = null;
 
                    if(player.isOnline() && player instanceof Player online && FoodSystem.getIndexState(online) == FoodSystem.FoodIndexState.IDEAL) {
-                       PlayerLevel.addPoints(online, 50);
+                       PlayerLevel.addPoints(online, 50, false);
                    }
                }
             }
