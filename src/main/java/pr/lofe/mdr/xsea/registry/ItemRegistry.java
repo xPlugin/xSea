@@ -78,7 +78,7 @@ public class ItemRegistry {
             for(String rawFlag: flags) {
                 ItemFlag flag = ItemFlag.valueOf(rawFlag.toUpperCase());
                 if(flag == ItemFlag.HIDE_ENCHANTS) meta.setEnchantmentGlintOverride(false);
-                else if (flag == ItemFlag.HIDE_ATTRIBUTES) {
+                else if (flag == ItemFlag.HIDE_ARMOR_TRIM) {
                     meta.addAttributeModifier(Attribute.GENERIC_ARMOR, new AttributeModifier("generic.armor", 0d, AttributeModifier.Operation.ADD_NUMBER));
                 }
                 meta.addItemFlags(flag);

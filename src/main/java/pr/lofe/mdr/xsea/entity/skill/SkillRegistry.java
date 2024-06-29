@@ -259,6 +259,17 @@ public class SkillRegistry implements Listener {
             Block block = event.getBlock();
             Player player = event.getPlayer();
 
+            if(doesPlayerHasSkill(player, NamespacedKey.minecraft("miner_6"))) {
+                event.setExpToDrop((int) (event.getExpToDrop() / 1.5));
+                List<ItemStack> items = new ArrayList<>(event.getBlock().getDrops(player.getActiveItem(), player));
+                for (ItemStack item : items) {
+                    item.setAmount((int) (item.getAmount() * 1.2));
+                    Location loc = block.getLocation().add(.5, .2, .5);
+                    block.getWorld().dropItemNaturally(loc, item);
+                }
+                event.setDropItems(false);
+            }
+
             if (includes.contains(block.getType())) {
 
                 if(RandomUtil.nextBool(3)) {
@@ -267,6 +278,7 @@ public class SkillRegistry implements Listener {
                     for (ItemStack item : items) {
                         block.getWorld().dropItemNaturally(loc, item);
                     }
+                    event.setDropItems(false);
                 }
 
 

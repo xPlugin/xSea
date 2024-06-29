@@ -6,6 +6,7 @@ import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.block.Block;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
@@ -42,6 +43,20 @@ public class BlockListener implements Listener {
 
         if(LootTables.SHIPWRECK_SUPPLY.getKey().equals(event.getLootTable().getKey())) {
             if(RandomUtil.nextBool(70)) event.getLoot().add(new ItemStack(Material.SUGAR_CANE, RandomUtil.nextInt(3)));
+        }
+
+        Entity ent = event.getEntity();
+        if(ent instanceof Player player) {
+            if(SkillRegistry.doesPlayerHasSkill(player, NamespacedKey.minecraft("adventurer_1"))) {
+                List<ItemStack> loot = event.getLoot();
+                for (int i = 0; i < loot.size(); i++) {
+                    if(RandomUtil.nextBool(60)) {
+                        ItemStack item = loot.get(i);
+                        item.setAmount(Math.min(item.getAmount() + RandomUtil.nextInt(3), 64));
+                        loot.set(i, item);
+                    }
+                }
+            }
         }
     }
 
