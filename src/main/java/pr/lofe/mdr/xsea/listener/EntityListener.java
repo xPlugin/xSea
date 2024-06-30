@@ -240,7 +240,7 @@ public class EntityListener implements Listener {
 
         for(Player player: Bukkit.getOnlinePlayers()) {
             boolean inWater = playerInWater(player);
-            if(inWater && !player.hasPotionEffect(PotionEffectType.CONDUIT_POWER)) {
+            if(inWater) {
                 ItemStack item = player.getInventory().getBoots(); // getBoobs
                 if(xSea.getItems().getKey(item).equals("flippers")) {
                     PotionEffect effect = player.getPotionEffect(PotionEffectType.DOLPHINS_GRACE);
@@ -252,7 +252,6 @@ public class EntityListener implements Listener {
                 }
             }
 
-            // if(player.getRemainingAir() > 0 && inWater) player.setRemainingAir(player.getRemainingAir() + 1);
             ItemStack balloon = player.getInventory().getItem(9);
 
             int balloonCapacity = 700;
@@ -277,15 +276,16 @@ public class EntityListener implements Listener {
             airTick.putIfAbsent(player, balloonCapacity);
             int currentAmount = airTick.get(player);
             if(currentAmount > balloonCapacity) currentAmount = balloonCapacity;
-            airTick.put(player, currentAmount);
 
             int bubbleVolume = balloonCapacity / 10;
 
             if(inWater && currentAmount >= 0) currentAmount--;
             else if(currentAmount < balloonCapacity) currentAmount += 3;
-            airTick.put(player, currentAmount);
+
+            if(!player.hasPotionEffect(PotionEffectType.CONDUIT_POWER)) airTick.put(player, currentAmount);
 
             int bubbles = (currentAmount / bubbleVolume);
+
             player.setRemainingAir(bubblesToTicks(bubbles) + 1);
         }
     }

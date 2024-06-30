@@ -59,7 +59,9 @@ public class PlayerLevel implements Listener {
 
     @EventHandler public void onFishCatch(CatchEvent event) {
         Player player = event.getPlayer();
-        addPoints(player, RandomUtil.nextInt(5), false);
+        if(event.getItem() != null) {
+            addPoints(player, RandomUtil.nextInt(5), true);
+        }
     }
 
     @EventHandler(priority = EventPriority.MONITOR) public void onExperienceEvent(PlayerPickupExperienceEvent event) {
@@ -116,7 +118,6 @@ public class PlayerLevel implements Listener {
 
     @EventHandler public void onEntityResurrect(EntityResurrectEvent event) {
         if(event.getEntity() instanceof Player player) {
-
             ItemStack item;
             if(player.getInventory().getItemInMainHand().getType() == Material.AIR) item = player.getInventory().getItemInOffHand();
             else item = player.getInventory().getItemInMainHand();
@@ -148,7 +149,9 @@ public class PlayerLevel implements Listener {
         int oldP = data.getConfig().getInt(player.getName() + ".points", 0);
 
         if (!shouldIgnoreLevel) {
-            points = points(getLevelByPoints(oldP), points);
+            int level = getLevelByPoints(oldP);
+            double divider = level < 10 ? 10 : 12;
+            points = points(level, points, divider);
             if(points <= 0) points = 1;
         }
         int newP = oldP + points;
@@ -175,8 +178,8 @@ public class PlayerLevel implements Listener {
         return true;
     }
 
-    public static int points(double level, int points) {
-        double calculate = points * (1d - level / 10);
+    public static int points(double level, int points, double divider) {
+        double calculate = points * (1d - level / divider);
         return (int) calculate;
     }
 
@@ -240,7 +243,7 @@ public class PlayerLevel implements Listener {
             case 8 -> threshold = 6900;
             case 9 -> threshold = 7900;
             case 10 -> threshold = 10000;
-            case 11 -> threshold = 11250; // Для стрима на всякий случай. Не говори что он вообще есть, он как бы скрыт
+            case 11 -> threshold = 12500; // Для стрима на всякий случай. Не говори что он вообще есть, он как бы скрыт
         }
         return threshold;
     }

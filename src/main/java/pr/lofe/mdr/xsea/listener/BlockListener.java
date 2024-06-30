@@ -88,9 +88,6 @@ public class BlockListener implements Listener {
                     event.setDropItems(false);
                 }
             }
-            else if (block.getType().name().contains("_ORE") && SkillRegistry.doesPlayerHasSkill(player, NamespacedKey.minecraft("miner_7"))) {
-
-            }
         }
     }
 

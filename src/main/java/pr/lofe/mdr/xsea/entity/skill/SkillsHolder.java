@@ -43,6 +43,8 @@ public class SkillsHolder implements InventoryHolder {
                 has ? Color.fromRGB(193, 255, 122) : (canHas ? Color.fromRGB(255, 220, 122) : Color.fromRGB(255, 255, 255))
         );
 
+        if(skill.currency() == 999) meta.setColor(Color.fromRGB(54, 54, 54));
+
         if(!has && canHas) meta.setEnchantmentGlintOverride(true);
 
         String rawName = skill.name();
