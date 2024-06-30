@@ -121,6 +121,15 @@ public class SeaCommand extends Command {
                     }
                 }.src.withArguments(new PlayerArgument("player")).withOptionalArguments(new IntegerArgument("level", 1)),
 
+                new Command("test") {
+                    @Override
+                    void execute(CommandSender sender, CommandArguments args) {
+                        if(sender instanceof Player player) {
+                            player.showDemoScreen();
+                        }
+                    }
+                }.src,
+
                 new EmptyCommand("animation")
                         .src.withSubcommands(
 

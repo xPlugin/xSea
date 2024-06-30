@@ -60,7 +60,7 @@ public class PlayerLevel implements Listener {
     @EventHandler public void onFishCatch(CatchEvent event) {
         Player player = event.getPlayer();
         if(event.getItem() != null) {
-            addPoints(player, RandomUtil.nextInt(5), true);
+            addPoints(player, RandomUtil.nextInt(15), true);
         }
     }
 
@@ -150,12 +150,16 @@ public class PlayerLevel implements Listener {
 
         if (!shouldIgnoreLevel) {
             int level = getLevelByPoints(oldP);
-            double divider = level < 10 ? 10 : 12;
-            points = points(level, points, divider);
-            if(points <= 0) points = 1;
+
+            double temp;
+            if(level >= 10) temp = points * 0.05;
+            else temp = points(level, points);
+
+            if(temp < 1 && temp >= 0.5) points = 1;
+            else points = 0;
         }
         int newP = oldP + points;
-        if(newP <= 0) return false;
+        if(points == 0) return false;
 
         data.getConfig().set(player.getName() + ".points", newP);
         data.save();
@@ -178,9 +182,8 @@ public class PlayerLevel implements Listener {
         return true;
     }
 
-    public static int points(double level, int points, double divider) {
-        double calculate = points * (1d - level / divider);
-        return (int) calculate;
+    public static double points(double level, int points) {
+        return points * (1d - level / 10);
     }
 
     private static int generateBoosterLevel() {
