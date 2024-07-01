@@ -91,7 +91,7 @@ public class PlayerLevel implements Listener {
                 case CHALLENGE -> points = 30;
                 default -> points = 0;
             }
-            addPoints(event.getPlayer(), points, false);
+            addPoints(event.getPlayer(), points, true);
         }
     }
 
@@ -152,7 +152,7 @@ public class PlayerLevel implements Listener {
             int level = getLevelByPoints(oldP);
 
             double temp;
-            if(level >= 10) temp = points * 0.05;
+            if(level >= 10) temp = points * 0.1;
             else temp = points(level, points);
 
             if(temp < 1 && temp >= 0.5) points = 1;

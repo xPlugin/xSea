@@ -293,7 +293,7 @@ public class SkillRegistry implements Listener {
                     }
                 }
 
-                PlayerLevel.addPoints(player, summary, false);
+                PlayerLevel.addPoints(player, summary, true);
             }
         }
     }
